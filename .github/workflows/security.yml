@@ -1,0 +1,50 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * 1' # Weekly on Monday at 2 AM
+
+jobs:
+  security-scan:
+    name: Security Vulnerability Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Run npm audit
+      run: pnpm audit --audit-level moderate
+
+    - name: Run Snyk security scan
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+
+    - name: Run CodeQL analysis
+      uses: github/codeql-action/init@v2
+      with:
+        languages: javascript
+
+    - name: Perform CodeQL analysis
+      uses: github/codeql-action/analyze@v2

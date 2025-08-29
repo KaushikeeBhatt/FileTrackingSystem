@@ -1,0 +1,26 @@
+# Development Dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install dependencies and netcat for the entrypoint script
+RUN apk add --no-cache netcat-openbsd
+RUN corepack enable pnpm
+
+# Copy package files
+COPY package.json pnpm-lock.yaml* ./
+
+# Install dependencies
+RUN pnpm install
+
+# Copy source code
+COPY . .
+
+# Make the entrypoint script executable
+RUN chmod +x /app/scripts/docker-entrypoint.sh
+
+ENTRYPOINT ["/app/scripts/docker-entrypoint.sh"]
+
+EXPOSE 3000
+
+CMD ["sh", "-c", "pnpm run setup:admin && pnpm run dev"]
