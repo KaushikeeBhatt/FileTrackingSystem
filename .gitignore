@@ -37,3 +37,20 @@ docker-data/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Uploaded files
+/uploads/
+
+# Log files
+*.log
+
+# Test coverage
+/coverage/
+
+# Editor directories and files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.sublime-workspace
