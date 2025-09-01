@@ -22,7 +22,7 @@ yarn-error.log*
 .env.local
 .env.*.local
 
-# Vercel
+
 .vercel
 
 # TypeScript
@@ -54,3 +54,5 @@ Thumbs.db
 !.vscode/launch.json
 !.vscode/extensions.json
 *.sublime-workspace
+.pnpm-store
+pnpm-lock.yaml
