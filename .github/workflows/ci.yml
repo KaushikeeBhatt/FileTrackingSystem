@@ -1,19 +1,17 @@
-name: CI Pipeline
+name: Comprehensive CI
 
 on:
   push:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  schedule:
+    - cron: '0 2 * * 1' # Weekly on Monday at 2 AM for security scan
 
 jobs:
-  lint-and-test:
-    name: Lint and Test
+  build-and-test:
+    name: Build, Test, and Scan
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
     
     services:
       mongodb:
@@ -29,16 +27,18 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Required for CodeQL
 
     - name: Setup pnpm
       uses: pnpm/action-setup@v2
       with:
         version: 8
 
-    - name: Setup Node.js ${{ matrix.node-version }}
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '18'
         cache: 'pnpm'
 
     - name: Install dependencies
@@ -50,14 +50,8 @@ jobs:
     - name: Run TypeScript check
       run: pnpm run type-check
 
-    - name: Run unit tests
-      run: pnpm run test
-      env:
-        MONGODB_URI: mongodb://localhost:27017/file-tracking-test
-        JWT_SECRET: test-jwt-secret-key
-
-    - name: Run integration tests
-      run: pnpm run test:integration
+    - name: Run unit and integration tests
+      run: pnpm run test && pnpm run test:integration
       env:
         MONGODB_URI: mongodb://localhost:27017/file-tracking-test
         JWT_SECRET: test-jwt-secret-key
@@ -65,10 +59,57 @@ jobs:
     - name: Build application
       run: pnpm run build
       env:
-        MONGODB_URI: mongodb://localhost:27017/file-tracking-test
-        JWT_SECRET: test-jwt-secret-key
+        MONGODB_URI: mongodb://localhost:27017/file-tracking-build
+        JWT_SECRET: build-jwt-secret-key
 
-    - name: Upload coverage reports
+    - name: Install Playwright browsers
+      run: pnpm exec playwright install --with-deps
+
+    - name: Start application for E2E tests
+      run: pnpm run start &
+      env:
+        MONGODB_URI: mongodb://localhost:27017/file-tracking-e2e
+        JWT_SECRET: e2e-test-jwt-secret
+        PORT: 3000
+
+    - name: Wait for application to be ready
+      run: npx wait-on http://localhost:3000 --timeout 60000
+
+    - name: Run Playwright E2E tests
+      run: pnpm run test:e2e
+      env:
+        BASE_URL: http://localhost:3000
+
+    - name: Upload Playwright report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 7
+
+    - name: Run dependency vulnerability audit
+      run: pnpm audit --audit-level moderate
+
+    - name: Run Snyk security scan
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'schedule'
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+
+    - name: Initialize CodeQL
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'schedule'
+      uses: github/codeql-action/init@v2
+      with:
+        languages: javascript
+
+    - name: Perform CodeQL Analysis
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'schedule'
+      uses: github/codeql-action/analyze@v2
+
+    - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
       with:
         file: ./coverage/lcov.info

@@ -47,16 +47,11 @@ jobs:
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
-        body: ${{ steps.changelog.outputs.changelog }}
+        body: |
+          ${{ steps.changelog.outputs.changelog }}
+          
+          ## Docker Image
+          The Docker image for this release is available at:
+          `${{ secrets.DOCKER_USERNAME }}/file-tracking-system:${{ github.ref_name }}`
         draft: false
         prerelease: false
-
-    - name: Upload build artifacts
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./build.zip
-        asset_name: file-tracking-system-${{ github.ref }}.zip
-        asset_content_type: application/zip
