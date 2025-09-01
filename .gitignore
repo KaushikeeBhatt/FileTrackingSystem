@@ -55,4 +55,4 @@ Thumbs.db
 !.vscode/extensions.json
 *.sublime-workspace
 .pnpm-store
-pnpm-lock.yaml
+
