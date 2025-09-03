@@ -3,6 +3,7 @@ import type { ObjectId } from "mongodb"
 export type AuditAction = 
   | 'create' | 'update' | 'delete' 
   | 'login' | 'logout' | 'download' | 'upload' | 'share'
+  | 'view' | 'edit' | 'approve' | 'reject'
 
 export type ResourceType = 'file' | 'user' | 'folder' | 'permission' | 'system'
 

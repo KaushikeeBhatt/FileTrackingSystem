@@ -165,4 +165,10 @@ export async function checkRateLimit(
   return rateLimiter.isAllowed(key, config)
 }
 
-export { rateLimiter }
+export type { RateLimitWindow }
+
+export { 
+  rateLimiter, 
+  type MaxRequests,
+  type RateLimitConfig
+}

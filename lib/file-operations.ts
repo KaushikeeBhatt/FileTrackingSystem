@@ -62,6 +62,7 @@ export class FileOperations {
     const now = new Date()
 
     const fileRecord: FileRecord = {
+      _id: new ObjectId(),
       fileName,
       originalName,
       fileType: mimeType,
@@ -90,9 +91,9 @@ export class FileOperations {
       userId: new ObjectId(user.id),
       action: "upload",
       resourceType: "file",
-      resourceId: fileId,
+      resourceId: new ObjectId(fileId),
       details: { fileName: originalName, size: buffer.length },
-      success: true,
+      status: "success"
     })
 
     return { ...fileRecord, _id: fileId, id: fileId.toString() }
@@ -114,11 +115,11 @@ export class FileOperations {
     if (result.modifiedCount === 1) {
       await AuditOperations.createLog({
         userId: new ObjectId(approverId),
-        action: "approve",
+        action: "update",
         resourceType: "file",
         resourceId: new ObjectId(fileId),
-        details: { status: "active" },
-        success: true,
+        details: { status: "approved" },
+        status: "success"
       })
       return true
     }
@@ -150,7 +151,7 @@ export class FileOperations {
           resourceType: "file",
           resourceId: new ObjectId(fileId),
           details: { fileName: file.originalName },
-          success: true,
+          status: "success"
         })
         return true
       }

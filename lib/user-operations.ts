@@ -11,6 +11,7 @@ export class UserOperations {
     const db = await this.getDb()
     const user: User = {
       ...userData,
+      _id: new ObjectId(),
       createdAt: new Date(),
       updatedAt: new Date(),
     }

@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { withAuthAndRateLimit } from "@/lib/middleware/rate-limit"
-import { DatabaseOperations } from "@/lib/database-operations"
+import { getFileById, createAuditLog, updateFileAccess } from "@/lib/database-operations"
+import { getDatabase } from "@/lib/mongodb"
 import { ObjectId } from "mongodb"
 
 async function filesHandler(request: NextRequest) {
@@ -35,9 +36,13 @@ async function filesHandler(request: NextRequest) {
 
     let files
     if (search) {
-      files = await DatabaseOperations.searchFiles(search, filters, limit)
+      const db = await getDatabase()
+      files = await db.collection("files").find({
+        $text: { $search: search },
+        ...filters
+      }).limit(limit).toArray()
     } else {
-      const db = await DatabaseOperations["getDb"]()
+      const db = await getDatabase()
       files = await db
         .collection("files")
         .aggregate([

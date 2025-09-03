@@ -47,7 +47,7 @@ export class FileSharingOperations {
       resourceType: "file",
       resourceId: new ObjectId(fileId),
       details: { sharedWith, permissions },
-      success: true,
+      status: "success"
     })
 
     return result

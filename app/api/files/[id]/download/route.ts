@@ -27,6 +27,10 @@ async function downloadHandler(request: NextRequest, { params }: { params: { id:
 
     // Get file buffer
     const buffer = await FileOperations.getFileBuffer(file.fileName)
+    
+    if (!(buffer instanceof Buffer)) {
+      throw new Error('Invalid file buffer')
+    }
 
     // Update access count
     await updateFileAccess(new ObjectId(fileId))
@@ -45,15 +49,14 @@ async function downloadHandler(request: NextRequest, { params }: { params: { id:
       userAgent: request.headers.get('user-agent')
     })
     
-    // Return file
-    const response = new NextResponse(buffer, {
+    // Return file with proper typing
+    return new NextResponse(Buffer.from(buffer), {
       headers: {
         "Content-Type": file.mimeType || "application/octet-stream",
         "Content-Disposition": `attachment; filename="${file.fileName}"`,
         "Content-Length": buffer.length.toString(),
       },
     })
-    return response
   } catch (error) {
     console.error("Download error:", error)
     return NextResponse.json({ error: "Download failed" }, { status: 500 })

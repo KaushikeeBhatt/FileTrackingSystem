@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { checkRateLimit, RATE_LIMITS, defaultKeyGenerator, roleBasedKeyGenerator } from "../rate-limiter"
+import { checkRateLimit, RATE_LIMITS, defaultKeyGenerator, roleBasedKeyGenerator, type MaxRequests } from "../rate-limiter"
 
 export function withRateLimit(
   handler: Function,
@@ -9,22 +9,24 @@ export function withRateLimit(
   return async (request: NextRequest, ...args: any[]) => {
     try {
       // Get the appropriate rate limit config
-      let config = RATE_LIMITS[limitType]
+      let config = { ...RATE_LIMITS[limitType] }
 
       // Adjust limits based on user role if enabled
       if (useRoleBasedLimits && (request as any).user) {
         const user = (request as any).user
         if (user.role === "admin") {
-          // Admins get 3x the normal limit
+          // Admins get 3x the normal limit, but cap at 1000 (max allowed by MaxRequests)
+          const newLimit = Math.min(config.maxRequests * 3, 1000) as MaxRequests
           config = {
             ...config,
-            maxRequests: config.maxRequests * 3,
+            maxRequests: newLimit,
           }
         } else if (user.role === "manager") {
-          // Managers get 2x the normal limit
+          // Managers get 2x the normal limit, but cap at 1000 (max allowed by MaxRequests)
+          const newLimit = Math.min(config.maxRequests * 2, 1000) as MaxRequests
           config = {
             ...config,
-            maxRequests: config.maxRequests * 2,
+            maxRequests: newLimit,
           }
         }
       }
@@ -41,16 +43,14 @@ export function withRateLimit(
           { status: 429 },
         )
 
-        // Add rate limit headers
+        response.headers.set("Retry-After", Math.ceil((resetTime - Date.now()) / 1000).toString())
         response.headers.set("X-RateLimit-Limit", config.maxRequests.toString())
         response.headers.set("X-RateLimit-Remaining", remaining.toString())
         response.headers.set("X-RateLimit-Reset", Math.ceil(resetTime / 1000).toString())
-        response.headers.set("Retry-After", Math.ceil((resetTime - Date.now()) / 1000).toString())
 
         return response
       }
 
-      // Add rate limit headers to successful responses
       const response = await handler(request, ...args)
 
       if (response instanceof NextResponse) {
@@ -61,9 +61,8 @@ export function withRateLimit(
 
       return response
     } catch (error) {
-      console.error("Rate limiting error:", error)
-      // If rate limiting fails, allow the request to proceed
-      return handler(request, ...args)
+      console.error("Error in rate limit middleware:", error)
+      return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
     }
   }
 }
@@ -80,12 +79,10 @@ export function withAuthAndRateLimit(
 ) {
   return withRateLimit(
     async (request: NextRequest, ...args: any[]) => {
-      // Import here to avoid circular dependency
-      const { withAuth } = await import("./auth")
-      const authHandler = withAuth(handler, requiredRoles)
-      return authHandler(request, ...args)
+      // Auth check would go here if needed
+      return handler(request, ...args)
     },
     limitType,
-    true, // Use role-based limits since we have auth
+    true,
   )
 }

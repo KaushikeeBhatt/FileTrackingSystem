@@ -86,11 +86,11 @@ export class AuthService {
     // Log successful login
     await AuditOperations.createLog({
       userId: user._id!,
-      action: "view",
+      action: "login",
       resourceType: "user",
       resourceId: user._id!,
       details: { ipAddress: "unknown" },
-      success: true,
+      status: "success"
     })
 
     return { user: authUser, token }
@@ -119,7 +119,7 @@ export class AuthService {
       name: userData.name,
       role: userData.role || "user",
       department: userData.department,
-      isActive: true,
+      status: 'active',
     })
 
     const authUser: AuthUser = {
@@ -136,11 +136,11 @@ export class AuthService {
     // Log successful registration
     await AuditOperations.createLog({
       userId: userId,
-      action: "upload",
+      action: "create",
       resourceType: "user",
       resourceId: userId,
-      details: {},
-      success: true,
+      details: { action: "user_registered" },
+      status: "success"
     })
 
     return { user: authUser, token }

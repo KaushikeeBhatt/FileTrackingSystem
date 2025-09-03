@@ -1,5 +1,5 @@
 import { getDatabase } from "./mongodb"
-import type { ObjectId } from "mongodb"
+import { ObjectId } from "mongodb"
 import type { Notification } from "./models/notification"
 
 export interface NotificationPreferences {
@@ -22,7 +22,8 @@ export class NotificationOperations {
 
     const newNotification: Notification = {
       ...notification,
-      isRead: false,
+      _id: new ObjectId(),
+      read: false,
       createdAt: new Date(),
     }
 

@@ -9,7 +9,7 @@ export interface AuditFilters {
   resourceId?: string
   dateFrom?: Date
   dateTo?: Date
-  success?: boolean
+  status?: string
 }
 
 export interface AuditStats {
@@ -32,6 +32,7 @@ export class AuditOperations {
 
     const auditEntry: AuditLog = {
       ...logData,
+      _id: new ObjectId(),
       timestamp: new Date(),
     }
 
@@ -69,8 +70,8 @@ export class AuditOperations {
       matchConditions.resourceId = new ObjectId(filters.resourceId)
     }
 
-    if (filters.success !== undefined) {
-      matchConditions.success = filters.success
+    if (filters.status) {
+      matchConditions.status = filters.status
     }
 
     if (filters.dateFrom || filters.dateTo) {
@@ -116,8 +117,8 @@ export class AuditOperations {
           resourceId: 1,
           details: 1,
           timestamp: 1,
-          success: 1,
-          errorMessage: 1,
+          status: 1,
+          error: 1,
           "user._id": 1,
           "user.name": 1,
           "user.email": 1,
@@ -175,8 +176,8 @@ export class AuditOperations {
           $group: {
             _id: null,
             totalActions: { $sum: 1 },
-            successfulActions: { $sum: { $cond: ["$success", 1, 0] } },
-            failedActions: { $sum: { $cond: ["$success", 0, 1] } },
+            successfulActions: { $sum: { $cond: ["$status", 1, 0] } },
+            failedActions: { $sum: { $cond: ["$status", 0, 1] } },
             uniqueUsers: { $addToSet: "$userId" },
           },
         },
@@ -283,7 +284,7 @@ export class AuditOperations {
       "Action",
       "Resource Type",
       "Resource Name",
-      "Success",
+      "Status",
       "Details",
       "IP Address",
     ]
@@ -296,7 +297,7 @@ export class AuditOperations {
         log.action,
         log.resourceType,
         log.resource?.originalName || log.details?.fileName || "",
-        log.success ? "Success" : "Failed",
+        log.status,
         JSON.stringify(log.details).replace(/"/g, '""'),
         log.details?.ipAddress || "",
       ]),
@@ -326,14 +327,15 @@ export class AuditOperations {
     }
 
     const audit: AuditLog = {
+      _id: new ObjectId(),
       userId,
       action,
       resourceType,
       resourceId,
       details: enhancedDetails,
       timestamp: new Date(),
-      success,
-      errorMessage,
+      status: success ? 'success' : 'failed',
+      ...(errorMessage && { error: errorMessage })
     }
 
     const result = await db.collection("audit_logs").insertOne(audit)
@@ -379,7 +381,7 @@ export class AuditOperations {
             action: 1,
             resourceType: 1,
             timestamp: 1,
-            success: 1,
+            status: 1,
             "user.name": 1,
             "resource.originalName": 1,
             details: 1,
