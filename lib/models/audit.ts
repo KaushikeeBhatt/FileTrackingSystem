@@ -8,6 +8,8 @@ export interface AuditLog {
   resourceId: ObjectId
   details: {
     fileName?: string
+    size?: number
+    status?: string
     previousValue?: any
     newValue?: any
     ipAddress?: string

@@ -145,9 +145,14 @@ export class AdminOperations {
     const total = countResult[0]?.total || 0
 
     // Add pagination
-    pipeline.push({ $skip: skip }, { $limit: limit })
-
-    const users = await db.collection("users").aggregate(pipeline).toArray()
+    const users = await db
+      .collection("users")
+      .aggregate([
+        ...pipeline,
+        { $skip: skip },
+        { $limit: limit }
+      ])
+      .toArray()
 
     return {
       users: users as UserManagement[],

@@ -49,13 +49,14 @@ async function downloadHandler(request: NextRequest, { params }: { params: { id:
     })
 
     // Return file
-    return new NextResponse(buffer, {
+    const response = new NextResponse(buffer as unknown as Blob | Buffer | FormData | ReadableStream | null, {
       headers: {
         "Content-Type": file.fileType || "application/octet-stream",
         "Content-Disposition": `attachment; filename="${file.originalName}"`,
         "Content-Length": buffer.length.toString(),
       },
     })
+    return response
   } catch (error) {
     console.error("Download error:", error)
     return NextResponse.json({ error: "Download failed" }, { status: 500 })

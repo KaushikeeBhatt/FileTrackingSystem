@@ -1,6 +1,13 @@
-import { hashPassword, verifyPassword, generateToken, verifyToken } from "@/lib/auth"
+import { hashPassword, verifyPassword, generateToken, verifyToken } from "@/lib/auth-utils"
 
 describe("Authentication Utils", () => {
+  const mockUser = {
+    id: "test-user-id",
+    email: "test@example.com",
+    name: "Test User",
+    role: "user" as const,
+  }
+
   describe("Password hashing", () => {
     it("should hash password correctly", async () => {
       const password = "testpassword123"
@@ -25,8 +32,7 @@ describe("Authentication Utils", () => {
 
   describe("JWT tokens", () => {
     it("should generate valid JWT token", () => {
-      const payload = { userId: "test-user-id", role: "user" }
-      const token = generateToken(payload)
+      const token = generateToken(mockUser)
 
       expect(token).toBeDefined()
       expect(typeof token).toBe("string")
@@ -34,13 +40,14 @@ describe("Authentication Utils", () => {
     })
 
     it("should verify JWT token correctly", () => {
-      const payload = { userId: "test-user-id", role: "user" }
-      const token = generateToken(payload)
+      const token = generateToken(mockUser)
 
       const decoded = verifyToken(token)
-      expect(decoded).toBeDefined()
-      expect(decoded.userId).toBe(payload.userId)
-      expect(decoded.role).toBe(payload.role)
+      expect(decoded).not.toBeNull()
+      if (!decoded) return // This makes TypeScript happy
+      
+      expect(decoded.id).toBe(mockUser.id)
+      expect(decoded.role).toBe(mockUser.role)
     })
 
     it("should reject invalid JWT token", () => {

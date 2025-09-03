@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
-import { connectToDatabase } from "@/lib/mongodb"
+import { getDatabase } from "@/lib/mongodb"
 
 export async function GET() {
   try {
     // Check database connection
-    const { db } = await connectToDatabase()
+    const db = await getDatabase()
     await db.admin().ping()
 
     // Check environment variables

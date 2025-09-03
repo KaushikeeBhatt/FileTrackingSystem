@@ -1,8 +1,6 @@
 import { getDatabase } from "./mongodb"
-import { ObjectId } from "mongodb"
-import type { AuditLog } from "./models"
-
-
+import { ObjectId, type Document } from "mongodb"
+import type { AuditLog } from "./models/audit"
 
 export interface AuditFilters {
   userId?: string
@@ -29,15 +27,7 @@ export class AuditOperations {
     return await getDatabase()
   }
 
-  static async createLog(logData: {
-    userId: ObjectId
-    action: string
-    resourceType: string
-    resourceId?: ObjectId
-    details?: any
-    success: boolean
-    errorMessage?: string
-  }): Promise<ObjectId> {
+  static async createLog(logData: Omit<AuditLog, '_id' | 'timestamp'>): Promise<ObjectId> {
     const db = await this.getDb()
 
     const auditEntry: AuditLog = {
@@ -201,10 +191,10 @@ export class AuditOperations {
       ])
       .toArray()
 
-    // Get action breakdown
+    // Get action breakdown with proper type annotation
     const actionBreakdown = await db
-      .collection("audit_logs")
-      .aggregate([
+      .collection<AuditLog>("audit_logs")
+      .aggregate<{ action: string; count: number }>([
         { $match: matchConditions },
         { $group: { _id: "$action", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
@@ -212,13 +202,13 @@ export class AuditOperations {
       ])
       .toArray()
 
-    // Get daily activity (last 30 days)
+    // Get daily activity (last 30 days) with proper type annotation
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
     const dailyActivity = await db
-      .collection("audit_logs")
-      .aggregate([
+      .collection<AuditLog>("audit_logs")
+      .aggregate<{ date: string; count: number }>([
         {
           $match: {
             ...matchConditions,
@@ -243,7 +233,7 @@ export class AuditOperations {
     if (userRole === "admin" || userRole === "manager") {
       const topUsersData = await db
         .collection("audit_logs")
-        .aggregate([
+        .aggregate<{ user: string; count: number }>([
           { $match: matchConditions },
           {
             $lookup: {
@@ -317,8 +307,8 @@ export class AuditOperations {
 
   static async createDetailedAuditLog(
     userId: ObjectId,
-    action: string,
-    resourceType: string,
+    action: "upload" | "download" | "view" | "edit" | "delete" | "approve" | "reject" | "share",
+    resourceType: "file" | "user" | "system",
     resourceId: ObjectId,
     details: any,
     success: boolean,
