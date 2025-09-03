@@ -43,7 +43,7 @@ jobs:
 
 
     - name: Install dependencies
-      run: pnpm install --no-frozen-lockfile
+      #run: pnpm install --no-frozen-lockfile
       run: npm ci
 
     - name: Run ESLint
