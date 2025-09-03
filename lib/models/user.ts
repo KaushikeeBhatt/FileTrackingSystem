@@ -5,11 +5,11 @@ export interface User {
   email: string
   password: string
   name: string
-  role: "admin" | "manager" | "user"
+  role: 'admin' | 'manager' | 'user'
   department?: string
+  isActive: boolean
   createdAt: Date
   updatedAt: Date
-  isActive: boolean
 }
 
 export interface UserSession {

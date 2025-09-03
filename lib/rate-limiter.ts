@@ -1,8 +1,8 @@
 import type { NextRequest } from "next/server"
 
 interface RateLimitConfig {
-  windowMs: number // Time window in milliseconds
-  maxRequests: number // Max requests per window
+  windowMs: RateLimitWindow
+  maxRequests: MaxRequests
   keyGenerator?: (request: NextRequest) => string
 }
 
@@ -12,6 +12,9 @@ interface RateLimitStore {
     resetTime: number
   }
 }
+
+type RateLimitWindow = 60_000 | 900_000 | 3_600_000 // 1 min | 15 min | 1 hour
+type MaxRequests = 5 | 10 | 20 | 30 | 60 | 100
 
 class RateLimiter {
   private store: RateLimitStore = {}
@@ -84,40 +87,40 @@ const rateLimiter = new RateLimiter()
 export const RATE_LIMITS = {
   // Authentication endpoints - strict limits to prevent brute force
   AUTH: {
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: 900_000, // 15 minutes
     maxRequests: 5, // 5 attempts per 15 minutes
   },
 
   // File upload - very strict due to resource intensity
   UPLOAD: {
-    windowMs: 60 * 60 * 1000, // 1 hour
+    windowMs: 3_600_000, // 1 hour
     maxRequests: 10, // 10 uploads per hour
   },
 
   // Search endpoints - moderate limits
   SEARCH: {
-    windowMs: 60 * 1000, // 1 minute
+    windowMs: 60_000, // 1 minute
     maxRequests: 30, // 30 searches per minute
   },
 
   // Admin endpoints - higher limits for admin users
   ADMIN: {
-    windowMs: 60 * 1000, // 1 minute
+    windowMs: 60_000, // 1 minute
     maxRequests: 100, // 100 requests per minute
   },
 
   // General API endpoints
   GENERAL: {
-    windowMs: 60 * 1000, // 1 minute
+    windowMs: 60_000, // 1 minute
     maxRequests: 60, // 60 requests per minute
   },
 
   // Public endpoints (no auth required)
   PUBLIC: {
-    windowMs: 60 * 1000, // 1 minute
+    windowMs: 60_000, // 1 minute
     maxRequests: 20, // 20 requests per minute
   },
-} as const satisfies Record<string, { windowMs: number; maxRequests: number }>
+} as const satisfies Record<string, RateLimitConfig>
 
 // Default key generator - uses IP for unauthenticated, user ID for authenticated
 export function defaultKeyGenerator(request: NextRequest): string {

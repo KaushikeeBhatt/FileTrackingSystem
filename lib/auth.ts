@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken"
 import { UserOperations } from "./user-operations"
 import { validateEnvironment } from "./env-validation"
 import { AuditOperations } from "./audit-operations"
+import type { User } from "./models/user"
 
 const env = validateEnvironment()
 const JWT_SECRET = env.JWT_SECRET
@@ -10,6 +11,7 @@ const JWT_EXPIRES_IN = "7d"
 
 export interface AuthUser {
   id: string
+  userId: string
   email: string
   name: string
   role: "admin" | "manager" | "user"
@@ -29,6 +31,7 @@ export class AuthService {
     return jwt.sign(
       {
         id: user.id,
+        userId: user.userId,
         email: user.email,
         name: user.name,
         role: user.role,
@@ -47,6 +50,7 @@ export class AuthService {
       const decoded = jwt.verify(token, process.env.JWT_SECRET!) as AuthUser & { iat: number; exp: number }
       return {
         id: decoded.id,
+        userId: decoded.userId,
         email: decoded.email,
         name: decoded.name,
         role: decoded.role,
@@ -70,6 +74,7 @@ export class AuthService {
 
     const authUser: AuthUser = {
       id: user._id!.toString(),
+      userId: user._id!.toString(),
       email: user.email,
       name: user.name,
       role: user.role,
@@ -119,6 +124,7 @@ export class AuthService {
 
     const authUser: AuthUser = {
       id: userId.toString(),
+      userId: userId.toString(),
       email: userData.email,
       name: userData.name,
       role: userData.role || "user",

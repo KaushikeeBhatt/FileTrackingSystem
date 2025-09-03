@@ -44,10 +44,13 @@ async function downloadHandler(request: NextRequest, { params }: { params: { id:
       action: "download",
       resourceType: "file",
       resourceId: new ObjectId(fileId),
-      details: { fileName: file.originalName },
-      success: true,
+      details: { 
+        fileName: file.originalName,
+        success: true 
+      },
+      status: "success"   // 👈 required field
     })
-
+    
     // Return file
     const response = new NextResponse(buffer, {
       headers: {

@@ -1,5 +1,5 @@
 import { getDatabase } from "./mongodb"
-import type { User } from "./models"
+import type { User } from "./models/user"
 import { ObjectId } from "mongodb"
 
 export class UserOperations {

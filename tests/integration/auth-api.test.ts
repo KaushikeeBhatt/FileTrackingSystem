@@ -1,10 +1,12 @@
 import { NextRequest } from "next/server"
+import { MongoClient, Db } from 'mongodb';
 import { POST as loginHandler } from "@/app/api/auth/login/route"
 import { POST as registerHandler } from "@/app/api/auth/register/route"
 import { createTestUser, setupTestDatabase, cleanupTestDatabase } from "../utils/test-helpers"
 
 describe("/api/auth", () => {
-  let client, db
+  let client: MongoClient;
+  let db: Db;
 
   beforeAll(async () => {
     const setup = await setupTestDatabase()
