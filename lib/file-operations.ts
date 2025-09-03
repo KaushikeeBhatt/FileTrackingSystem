@@ -68,7 +68,7 @@ export class FileOperations {
       fileSize: buffer.length,
       filePath: path.join("uploads", fileName),
       uploadedBy: new ObjectId(user.id),
-      status: "active",
+      status: "pending_approval",
       department: metadata.department || user.department || "unassigned",
       category: metadata.category || "general",
       tags: metadata.tags || [],
