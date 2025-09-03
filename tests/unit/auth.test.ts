@@ -1,11 +1,12 @@
 import { hashPassword, verifyPassword, generateToken, verifyToken } from "@/lib/auth-utils"
+import { AuthUser } from "@/lib/auth"
 
 describe("Authentication Utils", () => {
-  const mockUser = {
+  const mockUser: AuthUser = {
     id: "test-user-id",
     email: "test@example.com",
     name: "Test User",
-    role: "user" as const,
+    role: "user",
   }
 
   describe("Password hashing", () => {
@@ -41,19 +42,20 @@ describe("Authentication Utils", () => {
 
     it("should verify JWT token correctly", () => {
       const token = generateToken(mockUser)
-
       const decoded = verifyToken(token)
+      
       expect(decoded).not.toBeNull()
-      if (!decoded) return // This makes TypeScript happy
+      if (!decoded) return
       
       expect(decoded.id).toBe(mockUser.id)
       expect(decoded.role).toBe(mockUser.role)
+      expect(decoded.email).toBe(mockUser.email)
+      expect(decoded.name).toBe(mockUser.name)
     })
 
-    it("should reject invalid JWT token", () => {
-      const invalidToken = "invalid.jwt.token"
-
-      expect(() => verifyToken(invalidToken)).toThrow()
+    it("should return null for invalid token", () => {
+      const result = verifyToken("invalid.token.here")
+      expect(result).toBeNull()
     })
   })
 })

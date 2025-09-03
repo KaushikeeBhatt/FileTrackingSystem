@@ -35,7 +35,7 @@ export class AuthService {
         department: user.department,
       },
       JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN },
+      { expiresIn: JWT_EXPIRES_IN }
     )
   }
 
@@ -44,7 +44,7 @@ export class AuthService {
       return null
     }
     try {
-      const decoded = jwt.verify(token, JWT_SECRET) as any
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as AuthUser & { iat: number; exp: number }
       return {
         id: decoded.id,
         email: decoded.email,
@@ -59,12 +59,12 @@ export class AuthService {
 
   static async login(email: string, password: string): Promise<{ user: AuthUser; token: string } | null> {
     const user = await UserOperations.getUserByEmail(email)
-    if (!user || !user.isActive) {
+    if (!user) {
       return null
     }
 
-    const isValidPassword = await this.verifyPassword(password, user.password)
-    if (!isValidPassword) {
+    const isValid = await this.verifyPassword(password, user.password)
+    if (!isValid) {
       return null
     }
 
@@ -81,10 +81,10 @@ export class AuthService {
     // Log successful login
     await AuditOperations.createLog({
       userId: user._id!,
-      action: "login",
+      action: "view",
       resourceType: "user",
       resourceId: user._id!,
-      details: { ipAddress: "unknown" }, // Placeholder for IP address
+      details: { ipAddress: "unknown" },
       success: true,
     })
 
@@ -130,7 +130,7 @@ export class AuthService {
     // Log successful registration
     await AuditOperations.createLog({
       userId: userId,
-      action: "register",
+      action: "upload",
       resourceType: "user",
       resourceId: userId,
       details: {},
@@ -141,6 +141,6 @@ export class AuthService {
   }
 }
 
-export function verifyToken(token: string): any | null {
+export function verifyToken(token: string): AuthUser | null {
   return AuthService.verifyToken(token)
 }

@@ -117,7 +117,7 @@ export const RATE_LIMITS = {
     windowMs: 60 * 1000, // 1 minute
     maxRequests: 20, // 20 requests per minute
   },
-} as const
+} as const satisfies Record<string, { windowMs: number; maxRequests: number }>
 
 // Default key generator - uses IP for unauthenticated, user ID for authenticated
 export function defaultKeyGenerator(request: NextRequest): string {

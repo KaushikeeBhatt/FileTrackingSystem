@@ -49,7 +49,7 @@ async function downloadHandler(request: NextRequest, { params }: { params: { id:
     })
 
     // Return file
-    const response = new NextResponse(buffer as unknown as Blob | Buffer | FormData | ReadableStream | null, {
+    const response = new NextResponse(buffer, {
       headers: {
         "Content-Type": file.fileType || "application/octet-stream",
         "Content-Disposition": `attachment; filename="${file.originalName}"`,
