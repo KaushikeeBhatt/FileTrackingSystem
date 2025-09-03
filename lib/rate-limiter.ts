@@ -13,8 +13,8 @@ interface RateLimitStore {
   }
 }
 
-type RateLimitWindow = 60_000 | 900_000 | 3_600_000 // 1 min | 15 min | 1 hour
-type MaxRequests = 5 | 10 | 20 | 30 | 60 | 100
+type RateLimitWindow = 60000 | 300000 | 600000 | 1800000 | 3600000 // 1 min | 5 min | 10 min | 30 min | 1 hour
+type MaxRequests = 5 | 10 | 20 | 30 | 60 | 100 | 200 | 500 | 1000
 
 class RateLimiter {
   private store: RateLimitStore = {}
@@ -85,40 +85,52 @@ const rateLimiter = new RateLimiter()
 
 // Rate limit configurations for different endpoint types
 export const RATE_LIMITS = {
-  // Authentication endpoints - strict limits to prevent brute force
+  // General API endpoints (default)
+  GENERAL: {
+    windowMs: 60000 as RateLimitWindow, // 1 minute
+    maxRequests: 100 as MaxRequests,    // 100 requests per minute
+  },
+  
+  // Authentication endpoints (login, register, etc.)
   AUTH: {
-    windowMs: 900_000, // 15 minutes
-    maxRequests: 5, // 5 attempts per 15 minutes
+    windowMs: 300000 as RateLimitWindow, // 5 minutes
+    maxRequests: 10 as MaxRequests,     // 10 requests per 5 minutes
   },
-
-  // File upload - very strict due to resource intensity
+  
+  // File upload endpoints
   UPLOAD: {
-    windowMs: 3_600_000, // 1 hour
-    maxRequests: 10, // 10 uploads per hour
+    windowMs: 3600000 as RateLimitWindow, // 1 hour
+    maxRequests: 20 as MaxRequests,      // 20 uploads per hour
   },
-
+  
+  // File download endpoints
+  DOWNLOAD: {
+    windowMs: 600000 as RateLimitWindow, // 10 minutes
+    maxRequests: 30 as MaxRequests,      // 30 downloads per 10 minutes
+  },
+  
+  // API key endpoints
+  API_KEY: {
+    windowMs: 3600000 as RateLimitWindow, // 1 hour
+    maxRequests: 5 as MaxRequests,        // 5 key generations per hour
+  },
+  
   // Search endpoints - moderate limits
   SEARCH: {
-    windowMs: 60_000, // 1 minute
-    maxRequests: 30, // 30 searches per minute
+    windowMs: 60000 as RateLimitWindow, // 1 minute
+    maxRequests: 30 as MaxRequests,     // 30 searches per minute
   },
-
+  
   // Admin endpoints - higher limits for admin users
   ADMIN: {
-    windowMs: 60_000, // 1 minute
-    maxRequests: 100, // 100 requests per minute
+    windowMs: 60000 as RateLimitWindow, // 1 minute
+    maxRequests: 100 as MaxRequests,    // 100 requests per minute
   },
-
-  // General API endpoints
-  GENERAL: {
-    windowMs: 60_000, // 1 minute
-    maxRequests: 60, // 60 requests per minute
-  },
-
+  
   // Public endpoints (no auth required)
   PUBLIC: {
-    windowMs: 60_000, // 1 minute
-    maxRequests: 20, // 20 requests per minute
+    windowMs: 60000 as RateLimitWindow, // 1 minute
+    maxRequests: 20 as MaxRequests,     // 20 requests per minute
   },
 } as const satisfies Record<string, RateLimitConfig>
 

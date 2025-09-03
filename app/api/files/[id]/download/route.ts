@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { withAuth } from "@/lib/middleware/auth"
 import { FileOperations } from "@/lib/file-operations"
-import { DatabaseOperations } from "@/lib/database-operations"
+import { getFileById, createAuditLog, updateFileAccess } from "@/lib/database-operations"
 import { ObjectId } from "mongodb"
 import { rateLimit } from "@/lib/middleware/rate-limit"
 
@@ -11,18 +11,17 @@ async function downloadHandler(request: NextRequest, { params }: { params: { id:
     const fileId = params.id
 
     // Get file record
-    const db = await DatabaseOperations["getDb"]()
-    const file = await db.collection("files").findOne({ _id: new ObjectId(fileId) })
+    const file = await getFileById(new ObjectId(fileId))
 
     if (!file) {
       return NextResponse.json({ error: "File not found" }, { status: 404 })
     }
 
     // Check permissions
-    const isOwner = file.uploadedBy.toString() === user.id
+    const isOwner = file.ownerId.toString() === user.id
     const isAdminOrManager = user.role === "admin" || user.role === "manager"
 
-    if (!isAdminOrManager && !(isOwner && file.status === "active")) {
+    if (!isAdminOrManager && !(isOwner && !file.isDeleted)) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 })
     }
 
@@ -30,32 +29,27 @@ async function downloadHandler(request: NextRequest, { params }: { params: { id:
     const buffer = await FileOperations.getFileBuffer(file.fileName)
 
     // Update access count
-    await db.collection("files").updateOne(
-      { _id: new ObjectId(fileId) },
-      {
-        $inc: { "metadata.accessCount": 1 },
-        $set: { "metadata.lastAccessedAt": new Date() },
-      },
-    )
+    await updateFileAccess(new ObjectId(fileId))
 
     // Create audit log
-    await DatabaseOperations.createAuditLog({
+    await createAuditLog({
       userId: new ObjectId(user.id),
       action: "download",
       resourceType: "file",
       resourceId: new ObjectId(fileId),
       details: { 
-        fileName: file.originalName,
-        success: true 
+        fileName: file.fileName,
+        size: file.size,
+        mimeType: file.mimeType
       },
-      status: "success"   // 👈 required field
+      userAgent: request.headers.get('user-agent')
     })
     
     // Return file
     const response = new NextResponse(buffer, {
       headers: {
-        "Content-Type": file.fileType || "application/octet-stream",
-        "Content-Disposition": `attachment; filename="${file.originalName}"`,
+        "Content-Type": file.mimeType || "application/octet-stream",
+        "Content-Disposition": `attachment; filename="${file.fileName}"`,
         "Content-Length": buffer.length.toString(),
       },
     })

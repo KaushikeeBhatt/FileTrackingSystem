@@ -1,7 +1,7 @@
 import type { ObjectId } from "mongodb"
 
 export interface FileRecord {
-  _id?: ObjectId
+  _id: ObjectId
   fileName: string
   originalName: string
   fileType: string
@@ -26,12 +26,13 @@ export interface FileRecord {
 }
 
 export interface FileVersion {
-  _id?: ObjectId
+  _id: ObjectId
   fileId: ObjectId
   version: number
-  fileName: string
   filePath: string
+  fileSize: number
   uploadedBy: ObjectId
   uploadedAt: Date
-  changeDescription?: string
+  changes?: string
+  checksum: string
 }

@@ -1,21 +1,21 @@
 import type { ObjectId } from "mongodb"
 
+export type AuditAction = 
+  | 'create' | 'update' | 'delete' 
+  | 'login' | 'logout' | 'download' | 'upload' | 'share'
+
+export type ResourceType = 'file' | 'user' | 'folder' | 'permission' | 'system'
+
 export interface AuditLog {
-  _id?: ObjectId
-  userId: ObjectId
-  action: "upload" | "download" | "view" | "edit" | "delete" | "approve" | "reject" | "share"
-  resourceType: "file" | "user" | "system"
-  resourceId: ObjectId
-  details: {
-    fileName?: string
-    size?: number
-    status?: string
-    previousValue?: any
-    newValue?: any
-    ipAddress?: string
-    userAgent?: string
-  }
+  _id: ObjectId
   timestamp: Date
-  success: boolean
-  errorMessage?: string
+  userId: ObjectId
+  action: AuditAction
+  resourceType: ResourceType
+  resourceId?: ObjectId
+  details: Record<string, unknown>
+  status: 'success' | 'failed'
+  ipAddress?: string
+  userAgent?: string
+  error?: string
 }
