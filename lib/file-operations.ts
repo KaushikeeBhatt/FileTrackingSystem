@@ -2,7 +2,8 @@ import { getDatabase } from "./mongodb"
 import { ObjectId } from "mongodb"
 import { AuditOperations } from "./audit-operations"
 import { validateEnvironment } from "./env-validation"
-import type { FileRecord, User } from "./models"
+import type { FileRecord } from '@/lib/models/file'
+import type { AuthUser } from "@/lib/auth"
 import * as crypto from "crypto"
 import fs from "fs/promises"
 import path from "path"
@@ -40,34 +41,45 @@ export class FileOperations {
 
   static async uploadFile(
     file: { buffer: Buffer; originalName: string; mimeType: string },
-    user: User,
+    user: AuthUser,
     metadata: { description?: string; tags?: string[]; department?: string; category?: string },
   ): Promise<FileRecord & { id: string }> {
     const { buffer, originalName, mimeType } = file
 
-    if (buffer.length > env.MAX_FILE_SIZE) {
-      throw new Error(`File size exceeds the limit of ${env.MAX_FILE_SIZE / 1024 / 1024}MB`)
+    const maxFileSize = env.MAX_FILE_SIZE ? parseInt(env.MAX_FILE_SIZE.toString()) : 10 * 1024 * 1024; // Default 10MB
+    if (buffer.length > maxFileSize) {
+      throw new Error(`File size exceeds the limit of ${(maxFileSize / (1024 * 1024)).toFixed(2)}MB`)
     }
-    const allowedTypes = env.ALLOWED_FILE_TYPES.split(",").map((t) => t.trim())
-    if (!allowedTypes.includes(mimeType)) {
+    
+    const allowedTypes = env.ALLOWED_FILE_TYPES ? 
+      env.ALLOWED_FILE_TYPES.split(",").map((t) => t.trim()) : [];
+      
+    if (allowedTypes.length > 0 && !allowedTypes.includes(mimeType)) {
       throw new Error(`File type '${mimeType}' is not allowed.`)
     }
 
     const fileName = this.generateFileName(originalName)
+    const now = new Date()
 
-    const fileRecord: Omit<FileRecord, "_id" | "createdAt" | "updatedAt"> = {
+    const fileRecord: FileRecord = {
       fileName,
       originalName,
-      mimeType,
+      fileType: mimeType,
       fileSize: buffer.length,
       filePath: path.join("uploads", fileName),
       uploadedBy: new ObjectId(user.id),
-      status: "pending_approval",
-      department: metadata.department || user.department,
+      status: "active",
+      department: metadata.department || user.department || "unassigned",
       category: metadata.category || "general",
       tags: metadata.tags || [],
       description: metadata.description,
-      checksum: crypto.createHash("md5").update(buffer).digest("hex"),
+      createdAt: now,
+      updatedAt: now,
+      metadata: {
+        version: 1,
+        checksum: crypto.createHash("md5").update(buffer).digest("hex"),
+        accessCount: 0,
+      },
     }
 
     await this.saveFile(buffer, fileName)
@@ -86,14 +98,9 @@ export class FileOperations {
     return { ...fileRecord, _id: fileId, id: fileId.toString() }
   }
 
-  static async createFileRecord(fileData: Omit<FileRecord, "_id" | "createdAt" | "updatedAt">): Promise<ObjectId> {
+  static async createFileRecord(fileData: Omit<FileRecord, "_id">): Promise<ObjectId> {
     const db = await this.getDb()
-    const file: FileRecord = {
-      ...fileData,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-    const result = await db.collection("files").insertOne(file)
+    const result = await db.collection("files").insertOne(fileData)
     return result.insertedId
   }
 

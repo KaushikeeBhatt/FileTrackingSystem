@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "@/lib/middleware/auth";
-import FileOperations from "@/lib/file-operations";
+import { FileOperations } from "@/lib/file-operations";
 
 async function deleteHandler(request: NextRequest, { params }: { params: { id: string } }) {
   try {

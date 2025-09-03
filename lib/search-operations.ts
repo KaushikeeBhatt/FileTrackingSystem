@@ -94,20 +94,20 @@ export class SearchOperations {
     if (filters.dateFrom || filters.dateTo) {
       matchConditions.createdAt = {}
       if (filters.dateFrom) {
-        matchConditions.createdAt.$gte = filters.dateFrom
+        matchConditions.createdAt.$gte = new Date(filters.dateFrom)
       }
       if (filters.dateTo) {
-        matchConditions.createdAt.$lte = filters.dateTo
+        matchConditions.createdAt.$lte = new Date(filters.dateTo)
       }
     }
 
     // File size filter
-    if (filters.minSize || filters.maxSize) {
+    if (filters.minSize !== undefined || filters.maxSize !== undefined) {
       matchConditions.fileSize = {}
-      if (filters.minSize) {
+      if (filters.minSize !== undefined) {
         matchConditions.fileSize.$gte = filters.minSize
       }
-      if (filters.maxSize) {
+      if (filters.maxSize !== undefined) {
         matchConditions.fileSize.$lte = filters.maxSize
       }
     }

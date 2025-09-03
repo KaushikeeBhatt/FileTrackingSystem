@@ -1,0 +1,499 @@
+les\next\dist\compiled\next-server\app-route.runtime.dev.js:6:55038       
+    at async ek.execute (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:45808)
+    at async ek.handle (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:56292)
+    at async doRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1377:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1599:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1507:28)
+    at async DevServer.renderPageComponent (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1931:24)
+    at async DevServer.renderToResponseImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1969:32)
+    at async DevServer.pipeImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:920:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:816:17)  
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:174:21)
+    at async handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:353:24)
+    at async requestHandlerImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:377:13)     
+    at async Server.requestListener (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\start-server.js:141:13)  
+ POST /api/auth/login 500 in 39ms
+MongoDB connection error: MongoServerSelectionError: getaddrinfo ENOTFOUND mongodb
+    at Topology.selectServer (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:326:38)
+    at async Topology._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:200:28)
+    at async Topology.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:152:13)
+    at async topologyConnect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:258:17)
+    at async MongoClient._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:271:13)
+    at async MongoClient.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:196:13) {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'Unknown',
+    servers: Map(1) { 'mongodb:27017' => [ServerDescription] },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: null,
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined,
+  [cause]: MongoNetworkError: getaddrinfo ENOTFOUND mongodb
+      at Socket.<anonymous> (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\cmap\connect.js:286:44)
+      at Object.onceWrapper (node:events:633:26)
+      at Socket.emit (node:events:518:28)
+      at emitErrorNT (node:internal/streams/destroy:169:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:128:3)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+    errorLabelSet: Set(1) { 'ResetPool' },
+    beforeHandshake: false,
+    [cause]: Error: getaddrinfo ENOTFOUND mongodb
+        at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:118:26)
+        at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+      errno: -3008,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'mongodb'
+    }
+  }
+}
+Login error: Error: Failed to connect to MongoDB: getaddrinfo ENOTFOUND mongodb
+    at getDatabase (webpack-internal:///(rsc)/./lib/mongodb.ts:26:15)     
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async UserOperations.getDb (webpack-internal:///(rsc)/./lib/user-operations.ts:12:16)
+    at async UserOperations.getUserByEmail (webpack-internal:///(rsc)/./lib/user-operations.ts:25:20)
+    at async AuthService.login (webpack-internal:///(rsc)/./lib/auth.ts:57:22)
+    at async loginHandler (webpack-internal:///(rsc)/./app/api/auth/login/route.ts:21:24)
+    at async eval (webpack-internal:///(rsc)/./lib/middleware/rate-limit.ts:50:30)
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:55038       
+    at async ek.execute (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:45808)
+    at async ek.handle (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:56292)
+    at async doRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1377:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1599:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1507:28)
+    at async DevServer.renderPageComponent (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1931:24)
+    at async DevServer.renderToResponseImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1969:32)
+    at async DevServer.pipeImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:920:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:816:17)  
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:174:21)
+    at async handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:353:24)
+    at async requestHandlerImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:377:13)     
+    at async Server.requestListener (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\start-server.js:141:13)  
+ POST /api/auth/login 500 in 48ms
+ ○ Compiling /register ...
+ ✓ Compiled /register in 2.3s (719 modules)
+ ✓ Compiled /api/auth/register in 208ms (489 modules)
+MongoDB connection error: MongoServerSelectionError: getaddrinfo ENOTFOUND mongodb
+    at Topology.selectServer (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:326:38)
+    at async Topology._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:200:28)
+    at async Topology.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:152:13)
+    at async topologyConnect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:258:17)
+    at async MongoClient._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:271:13)
+    at async MongoClient.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:196:13) {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'Unknown',
+    servers: Map(1) { 'mongodb:27017' => [ServerDescription] },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: null,
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined,
+  [cause]: MongoNetworkError: getaddrinfo ENOTFOUND mongodb
+      at Socket.<anonymous> (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\cmap\connect.js:286:44)
+      at Object.onceWrapper (node:events:633:26)
+      at Socket.emit (node:events:518:28)
+      at emitErrorNT (node:internal/streams/destroy:169:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:128:3)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+    errorLabelSet: Set(1) { 'ResetPool' },
+    beforeHandshake: false,
+    [cause]: Error: getaddrinfo ENOTFOUND mongodb
+        at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:118:26)
+        at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+      errno: -3008,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'mongodb'
+    }
+  }
+}
+Registration error: Error: Failed to connect to MongoDB: getaddrinfo ENOTFOUND mongodb
+    at getDatabase (webpack-internal:///(rsc)/./lib/mongodb.ts:26:15)     
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async UserOperations.getDb (webpack-internal:///(rsc)/./lib/user-operations.ts:12:16)
+    at async UserOperations.getUserByEmail (webpack-internal:///(rsc)/./lib/user-operations.ts:25:20)
+    at async AuthService.register (webpack-internal:///(rsc)/./lib/auth.ts:91:30)
+    at async registerHandler (webpack-internal:///(rsc)/./app/api/auth/register/route.ts:21:24)
+    at async eval (webpack-internal:///(rsc)/./lib/middleware/rate-limit.ts:50:30)
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:55038       
+    at async ek.execute (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:45808)
+    at async ek.handle (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:56292)
+    at async doRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1377:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1599:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1507:28)
+    at async DevServer.renderPageComponent (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1931:24)
+    at async DevServer.renderToResponseImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1969:32)
+    at async DevServer.pipeImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:920:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:816:17)  
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:174:21)
+    at async handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:353:24)
+    at async requestHandlerImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:377:13)     
+    at async Server.requestListener (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\start-server.js:141:13)  
+ POST /api/auth/register 500 in 395ms
+ ✓ Compiled /api/auth/login in 282ms (491 modules)
+MongoDB connection error: MongoServerSelectionError: getaddrinfo ENOTFOUND mongodb
+    at Topology.selectServer (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:326:38)
+    at async Topology._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:200:28)
+    at async Topology.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:152:13)
+    at async topologyConnect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:258:17)
+    at async MongoClient._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:271:13)
+    at async MongoClient.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:196:13) {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'Unknown',
+    servers: Map(1) { 'mongodb:27017' => [ServerDescription] },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: null,
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined,
+  [cause]: MongoNetworkError: getaddrinfo ENOTFOUND mongodb
+      at Socket.<anonymous> (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\cmap\connect.js:286:44)
+      at Object.onceWrapper (node:events:633:26)
+      at Socket.emit (node:events:518:28)
+      at emitErrorNT (node:internal/streams/destroy:169:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:128:3)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+    errorLabelSet: Set(1) { 'ResetPool' },
+    beforeHandshake: false,
+    [cause]: Error: getaddrinfo ENOTFOUND mongodb
+        at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:118:26)
+        at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+      errno: -3008,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'mongodb'
+    }
+  }
+}
+Login error: Error: Failed to connect to MongoDB: getaddrinfo ENOTFOUND mongodb
+    at getDatabase (webpack-internal:///(rsc)/./lib/mongodb.ts:26:15)     
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async UserOperations.getDb (webpack-internal:///(rsc)/./lib/user-operations.ts:12:16)
+    at async UserOperations.getUserByEmail (webpack-internal:///(rsc)/./lib/user-operations.ts:25:20)
+    at async AuthService.login (webpack-internal:///(rsc)/./lib/auth.ts:57:22)
+    at async loginHandler (webpack-internal:///(rsc)/./app/api/auth/login/route.ts:21:24)
+    at async eval (webpack-internal:///(rsc)/./lib/middleware/rate-limit.ts:50:30)
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:55038       
+    at async ek.execute (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:45808)
+    at async ek.handle (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:56292)
+    at async doRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1377:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1599:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1507:28)
+    at async DevServer.renderPageComponent (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1931:24)
+    at async DevServer.renderToResponseImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1969:32)
+    at async DevServer.pipeImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:920:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:816:17)  
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:174:21)
+    at async handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:353:24)
+    at async requestHandlerImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:377:13)     
+    at async Server.requestListener (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\start-server.js:141:13)  
+ POST /api/auth/login 500 in 498ms
+MongoDB connection error: MongoServerSelectionError: getaddrinfo ENOTFOUND mongodb
+    at Topology.selectServer (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:326:38)
+    at async Topology._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:200:28)
+    at async Topology.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:152:13)
+    at async topologyConnect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:258:17)
+    at async MongoClient._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:271:13)
+    at async MongoClient.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:196:13) {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'Unknown',
+    servers: Map(1) { 'mongodb:27017' => [ServerDescription] },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: null,
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined,
+  [cause]: MongoNetworkError: getaddrinfo ENOTFOUND mongodb
+      at Socket.<anonymous> (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\cmap\connect.js:286:44)
+      at Object.onceWrapper (node:events:633:26)
+      at Socket.emit (node:events:518:28)
+      at emitErrorNT (node:internal/streams/destroy:169:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:128:3)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+    errorLabelSet: Set(1) { 'ResetPool' },
+    beforeHandshake: false,
+    [cause]: Error: getaddrinfo ENOTFOUND mongodb
+        at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:118:26)
+        at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+      errno: -3008,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'mongodb'
+    }
+  }
+}
+Login error: Error: Failed to connect to MongoDB: getaddrinfo ENOTFOUND mongodb
+    at getDatabase (webpack-internal:///(rsc)/./lib/mongodb.ts:26:15)     
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async UserOperations.getDb (webpack-internal:///(rsc)/./lib/user-operations.ts:12:16)
+    at async UserOperations.getUserByEmail (webpack-internal:///(rsc)/./lib/user-operations.ts:25:20)
+    at async AuthService.login (webpack-internal:///(rsc)/./lib/auth.ts:57:22)
+    at async loginHandler (webpack-internal:///(rsc)/./app/api/auth/login/route.ts:21:24)
+    at async eval (webpack-internal:///(rsc)/./lib/middleware/rate-limit.ts:50:30)
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:55038       
+    at async ek.execute (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:45808)
+    at async ek.handle (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:56292)
+    at async doRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1377:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1599:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1507:28)
+    at async DevServer.renderPageComponent (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1931:24)
+    at async DevServer.renderToResponseImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1969:32)
+    at async DevServer.pipeImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:920:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:816:17)  
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:174:21)
+    at async handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:353:24)
+    at async requestHandlerImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:377:13)     
+    at async Server.requestListener (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\start-server.js:141:13)  
+ POST /api/auth/login 500 in 55ms
+MongoDB connection error: MongoServerSelectionError: getaddrinfo ENOTFOUND mongodb
+    at Topology.selectServer (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:326:38)
+    at async Topology._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:200:28)
+    at async Topology.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:152:13)
+    at async topologyConnect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:258:17)
+    at async MongoClient._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:271:13)
+    at async MongoClient.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:196:13) {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'Unknown',
+    servers: Map(1) { 'mongodb:27017' => [ServerDescription] },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: null,
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined,
+  [cause]: MongoNetworkError: getaddrinfo ENOTFOUND mongodb
+      at Socket.<anonymous> (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\cmap\connect.js:286:44)
+      at Object.onceWrapper (node:events:633:26)
+      at Socket.emit (node:events:518:28)
+      at emitErrorNT (node:internal/streams/destroy:169:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:128:3)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+    errorLabelSet: Set(1) { 'ResetPool' },
+    beforeHandshake: false,
+    [cause]: Error: getaddrinfo ENOTFOUND mongodb
+        at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:118:26)
+        at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+      errno: -3008,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'mongodb'
+    }
+  }
+}
+Registration error: Error: Failed to connect to MongoDB: getaddrinfo ENOTFOUND mongodb
+    at getDatabase (webpack-internal:///(rsc)/./lib/mongodb.ts:26:15)     
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async UserOperations.getDb (webpack-internal:///(rsc)/./lib/user-operations.ts:12:16)
+    at async UserOperations.getUserByEmail (webpack-internal:///(rsc)/./lib/user-operations.ts:25:20)
+    at async AuthService.register (webpack-internal:///(rsc)/./lib/auth.ts:91:30)
+    at async registerHandler (webpack-internal:///(rsc)/./app/api/auth/register/route.ts:21:24)
+    at async eval (webpack-internal:///(rsc)/./lib/middleware/rate-limit.ts:50:30)
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:55038       
+    at async ek.execute (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:45808)
+    at async ek.handle (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:56292)
+    at async doRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1377:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1599:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1507:28)
+    at async DevServer.renderPageComponent (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1931:24)
+    at async DevServer.renderToResponseImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1969:32)
+    at async DevServer.pipeImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:920:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:816:17)  
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:174:21)
+    at async handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:353:24)
+    at async requestHandlerImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:377:13)     
+    at async Server.requestListener (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\start-server.js:141:13)  
+ POST /api/auth/register 500 in 49ms
+MongoDB connection error: MongoServerSelectionError: getaddrinfo ENOTFOUND mongodb
+    at Topology.selectServer (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:326:38)
+    at async Topology._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:200:28)
+    at async Topology.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:152:13)
+    at async topologyConnect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:258:17)
+    at async MongoClient._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:271:13)
+    at async MongoClient.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:196:13) {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'Unknown',
+    servers: Map(1) { 'mongodb:27017' => [ServerDescription] },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: null,
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined,
+  [cause]: MongoNetworkError: getaddrinfo ENOTFOUND mongodb
+      at Socket.<anonymous> (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\cmap\connect.js:286:44)
+      at Object.onceWrapper (node:events:633:26)
+      at Socket.emit (node:events:518:28)
+      at emitErrorNT (node:internal/streams/destroy:169:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:128:3)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+    errorLabelSet: Set(1) { 'ResetPool' },
+    beforeHandshake: false,
+    [cause]: Error: getaddrinfo ENOTFOUND mongodb
+        at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:118:26)
+        at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+      errno: -3008,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'mongodb'
+    }
+  }
+}
+Registration error: Error: Failed to connect to MongoDB: getaddrinfo ENOTFOUND mongodb
+    at getDatabase (webpack-internal:///(rsc)/./lib/mongodb.ts:26:15)     
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async UserOperations.getDb (webpack-internal:///(rsc)/./lib/user-operations.ts:12:16)
+    at async UserOperations.getUserByEmail (webpack-internal:///(rsc)/./lib/user-operations.ts:25:20)
+    at async AuthService.register (webpack-internal:///(rsc)/./lib/auth.ts:91:30)
+    at async registerHandler (webpack-internal:///(rsc)/./app/api/auth/register/route.ts:21:24)
+    at async eval (webpack-internal:///(rsc)/./lib/middleware/rate-limit.ts:50:30)
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:55038       
+    at async ek.execute (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:45808)
+    at async ek.handle (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:56292)
+    at async doRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1377:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1599:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1507:28)
+    at async DevServer.renderPageComponent (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1931:24)
+    at async DevServer.renderToResponseImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1969:32)
+    at async DevServer.pipeImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:920:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:816:17)  
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:174:21)
+    at async handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:353:24)
+    at async requestHandlerImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:377:13)     
+    at async Server.requestListener (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\start-server.js:141:13)  
+ POST /api/auth/register 500 in 52ms
+MongoDB connection error: MongoServerSelectionError: getaddrinfo ENOTFOUND mongodb
+    at Topology.selectServer (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:326:38)
+    at async Topology._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:200:28)
+    at async Topology.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\sdam\topology.js:152:13)
+    at async topologyConnect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:258:17)
+    at async MongoClient._connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:271:13)
+    at async MongoClient.connect (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\mongo_client.js:196:13) {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'Unknown',
+    servers: Map(1) { 'mongodb:27017' => [ServerDescription] },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: null,
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined,
+  [cause]: MongoNetworkError: getaddrinfo ENOTFOUND mongodb
+      at Socket.<anonymous> (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\mongodb@6.18.0_socks@2.8.7\node_modules\mongodb\lib\cmap\connect.js:286:44)
+      at Object.onceWrapper (node:events:633:26)
+      at Socket.emit (node:events:518:28)
+      at emitErrorNT (node:internal/streams/destroy:169:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:128:3)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+    errorLabelSet: Set(1) { 'ResetPool' },
+    beforeHandshake: false,
+    [cause]: Error: getaddrinfo ENOTFOUND mongodb
+        at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:118:26)
+        at GetAddrInfoReqWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+      errno: -3008,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'mongodb'
+    }
+  }
+}
+Login error: Error: Failed to connect to MongoDB: getaddrinfo ENOTFOUND mongodb
+    at getDatabase (webpack-internal:///(rsc)/./lib/mongodb.ts:26:15)     
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async UserOperations.getDb (webpack-internal:///(rsc)/./lib/user-operations.ts:12:16)
+    at async UserOperations.getUserByEmail (webpack-internal:///(rsc)/./lib/user-operations.ts:25:20)
+    at async AuthService.login (webpack-internal:///(rsc)/./lib/auth.ts:57:22)
+    at async loginHandler (webpack-internal:///(rsc)/./app/api/auth/login/route.ts:21:24)
+    at async eval (webpack-internal:///(rsc)/./lib/middleware/rate-limit.ts:50:30)
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:55038       
+    at async ek.execute (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:45808)
+    at async ek.handle (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:6:56292)
+    at async doRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1377:42)
+    at async cacheEntry.responseCache.get.routeKind (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1599:28)
+    at async DevServer.renderToResponseWithComponentsImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1507:28)
+    at async DevServer.renderPageComponent (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1931:24)
+    at async DevServer.renderToResponseImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:1969:32)
+    at async DevServer.pipeImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:920:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\base-server.js:816:17)  
+    at async C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:174:21)
+    at async handleRequest (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:353:24)
+    at async requestHandlerImpl (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\router-server.js:377:13)     
+    at async Server.requestListener (C:\Users\kaush\Downloads\file-tracking-docker\node_modules\.pnpm\next@14.2.4_@babel+core@7.2_c3187d476c9f1b13eb2ff7212f530089\node_modules\next\dist\server\lib\start-server.js:141:13)  
+ POST /api/auth/login 500 in 37ms

@@ -1,26 +1,38 @@
-# Development Dockerfile
-FROM node:18-alpine
+FROM node:18-slim
 
 WORKDIR /app
 
-# Install dependencies and netcat for the entrypoint script
-RUN apk add --no-cache netcat-openbsd
+# Install dependencies for mongosh and netcat for the wait script
+RUN apt-get update && \
+    apt-get install -y gnupg curl dos2unix netcat-traditional && \
+    curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor && \
+    echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/7.0 main" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list && \
+    apt-get update && \
+    apt-get install -y mongodb-mongosh && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN corepack enable pnpm
 
-# Copy package files
+# Copy only package manager files
 COPY package.json pnpm-lock.yaml* ./
 
+# Set a different registry to potentially solve network issues
+RUN pnpm config set registry https://registry.yarnpkg.com
+# Increase the network timeout to handle slow connections
+RUN pnpm config set network-timeout 100000
+RUN pnpm config set network-concurrency 1
+
+# Clear the pnpm cache
+RUN pnpm store prune
+
 # Install dependencies
-RUN pnpm install
+RUN pnpm install --no-frozen-lockfile
 
 # Copy source code
 COPY . .
 
-# Make the entrypoint script executable
-RUN chmod +x /app/scripts/docker-entrypoint.sh
-
-ENTRYPOINT ["/app/scripts/docker-entrypoint.sh"]
-
+# Expose the port
 EXPOSE 3000
 
-CMD ["sh", "-c", "pnpm run setup:admin && pnpm run dev"]
+# The command is now handled in docker-compose.yml
+CMD ["pnpm", "run", "dev"]

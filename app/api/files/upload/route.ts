@@ -55,8 +55,9 @@ async function uploadHandler(request: NextRequest) {
       message: "File uploaded successfully",
     })
   } catch (error) {
-    console.error("Upload error:", error)
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 })
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred"
+    console.error(`[File Upload Error]: ${errorMessage}`, { error })
+    return NextResponse.json({ error: `Upload failed: ${errorMessage}` }, { status: 500 })
   }
 }
 // export const POST = withAuth(uploadHandler)

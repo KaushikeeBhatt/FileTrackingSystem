@@ -335,7 +335,7 @@ export function AdvancedSearch({ onSearch, onReset }: AdvancedSearchProps) {
               id="min-size"
               type="number"
               placeholder="0"
-              value={filters.minSize || ""}
+              value={filters.minSize ? filters.minSize / 1024 / 1024 : ""}
               onChange={(e) =>
                 setFilters((prev) => ({
                   ...prev,
