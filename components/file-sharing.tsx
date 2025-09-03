@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -26,8 +26,9 @@ export function FileSharing({ fileId, fileName }: FileSharingProps) {
     permissions: "read" as "read" | "edit" | "download",
     expiresAt: "",
   })
+  const [error, setError] = useState<string | null>(null)
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const response = await authFetch("/api/admin/users")
       if (response.ok) {
@@ -37,7 +38,7 @@ export function FileSharing({ fileId, fileName }: FileSharingProps) {
     } catch (error) {
       console.error("Failed to fetch users:", error)
     }
-  }
+  }, [user])
 
   const shareFile = async () => {
     try {
@@ -52,7 +53,11 @@ export function FileSharing({ fileId, fileName }: FileSharingProps) {
       if (response.ok) {
         setShowShareDialog(false)
         setShareForm({ sharedWith: "", permissions: "read", expiresAt: "" })
+        setError(null)
         // Refresh shares list
+      } else {
+        const data = await response.json()
+        setError(data.error)
       }
     } catch (error) {
       console.error("Share failed:", error)
@@ -60,8 +65,10 @@ export function FileSharing({ fileId, fileName }: FileSharingProps) {
   }
 
   useEffect(() => {
-    fetchUsers()
-  }, [])
+    if (showShareDialog) {
+      fetchUsers();
+    }
+  }, [showShareDialog, fetchUsers]);
 
   return (
     <Card>
@@ -80,9 +87,14 @@ export function FileSharing({ fileId, fileName }: FileSharingProps) {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Share "{fileName}"</DialogTitle>
+                <DialogTitle>Share &quot;{fileName}&quot;</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
+                {error && (
+                  <div className="text-red-500 text-sm">
+                    The file &quot;{fileName}&quot; can&apos;t be shared. {error}
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label>Share with User</Label>
                   <Select

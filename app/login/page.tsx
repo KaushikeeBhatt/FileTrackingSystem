@@ -61,9 +61,9 @@ export default function LoginPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
+                <div className="text-red-500 text-sm mt-2">
+                  You can not access this page.
+                </div>
               )}
 
               <div className="space-y-2">
@@ -106,7 +106,7 @@ export default function LoginPage() {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Don't have an account?{" "}
+                Do not have an account?{" "}
                 <Link href="/register" className="text-blue-600 hover:text-blue-500 font-medium">
                   Sign up
                 </Link>

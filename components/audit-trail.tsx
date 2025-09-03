@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -74,7 +74,7 @@ export function AuditTrail() {
     success: "all",
   })
 
-  const fetchAuditLogs = async () => {
+  const fetchAuditLogs = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams()
@@ -105,9 +105,9 @@ export function AuditTrail() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
 
-  const fetchAuditStats = async () => {
+  const fetchAuditStats = useCallback(async () => {
     try {
       const params = new URLSearchParams()
       if (filters.dateFrom) params.append("dateFrom", filters.dateFrom.toISOString())
@@ -126,12 +126,12 @@ export function AuditTrail() {
     } catch (error) {
       console.error("Failed to fetch audit stats:", error)
     }
-  }
+  }, [filters])
 
   useEffect(() => {
     fetchAuditLogs()
     fetchAuditStats()
-  }, [filters])
+  }, [fetchAuditLogs, fetchAuditStats, filters])
 
   const exportReport = async (format: "csv" | "json") => {
     try {

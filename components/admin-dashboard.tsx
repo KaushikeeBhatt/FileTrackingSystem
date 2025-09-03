@@ -269,7 +269,7 @@ export function AdminDashboard() {
         <CardContent className="p-8 text-center">
           <AlertTriangle className="h-12 w-12 mx-auto text-red-500 mb-4" />
           <h3 className="text-lg font-semibold mb-2">Access Denied</h3>
-          <p className="text-slate-600">You don't have permission to access the admin dashboard.</p>
+          <p className="text-slate-600">You don not have permission to access the admin dashboard.</p>
         </CardContent>
       </Card>
     )
@@ -837,6 +837,12 @@ export function AdminDashboard() {
           </DialogContent>
         </Dialog>
       )}
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user?.name || 'Admin'}</h1>
+        <p className="text-muted-foreground">
+          It is time to review the dashboard.
+        </p>
+      </div>
     </div>
   )
 }
