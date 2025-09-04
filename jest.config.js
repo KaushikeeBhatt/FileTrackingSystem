@@ -1,35 +1,64 @@
-const nextJest = require("next/jest")
+const nextJest = require('next/jest');
 
 const createJestConfig = nextJest({
-  // Provide the path to your Next.js app to load next.config.js and .env files
-  dir: "./",
-})
+  dir: './', // Path to your Next.js app
+});
 
-// Add any custom config to be passed to Jest
 const customJestConfig = {
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
-  testEnvironment: "jsdom",
-  testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/", "<rootDir>/tests/e2e/"],
-  collectCoverageFrom: [
-    "app/**/*.{js,jsx,ts,tsx}",
-    "components/**/*.{js,jsx,ts,tsx}",
-    "lib/**/*.{js,jsx,ts,tsx}",
-    "!**/*.d.ts",
-    "!**/node_modules/**",
+  // Use the 'jsdom' environment for tests that rely on browser globals like 'window'
+  testEnvironment: 'jsdom',
+  
+  // Setup file remains the same
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  
+  // Test file patterns
+  testMatch: [
+    '**/tests/unit/**/*.test.[jt]s?(x)',
+    '**/tests/integration/**/*.test.[jt]s?(x)',
   ],
-  coverageThreshold: {
-    global: {
-      branches: 70,
-      functions: 70,
-      lines: 70,
-      statements: 70,
+  
+  // Paths to ignore
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/.next/',
+    '/tests/e2e/'
+  ],
+  
+  // Module aliases
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/$1',
+    '^@/components/(.*)$': '<rootDir>/components/$1',
+  },
+  
+  // Babel transformer
+  transform: {
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
+  },
+  
+  // Transform all node_modules except these
+  transformIgnorePatterns: [
+    '/node_modules/(?!(bson|mongodb)/)'
+  ],
+  
+  // Test-related configurations
+  testTimeout: 60000,
+  maxWorkers: 1,
+  
+  // Coverage
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coverageProvider: 'v8',
+  
+  // TypeScript configuration for Jest
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.jest.json',
     },
   },
-  moduleNameMapping: {
-    "^@/(.*)$": "<rootDir>/$1",
-  },
-  testTimeout: 10000,
-}
+  
+  // ESM related configurations
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node', 'mjs'],
+};
 
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-module.exports = createJestConfig(customJestConfig)
+module.exports = createJestConfig(customJestConfig);

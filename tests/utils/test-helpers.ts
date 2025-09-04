@@ -1,70 +1,64 @@
-import { MongoClient } from "mongodb"
-import bcrypt from "bcryptjs"
-import jwt from "jsonwebtoken"
+// tests/utils/test-helpers.ts
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { MongoClient } from 'mongodb';
+import { hash } from 'bcryptjs';
+
+let mongoServer: MongoMemoryServer;
+let client: MongoClient;
 
 export const createTestUser = async (overrides = {}) => {
-  const defaultUser = {
-    email: "test@example.com",
-    password: await bcrypt.hash("password123", 10),
-    name: "Test User",
-    role: "user",
-    createdAt: new Date(),
-    ...overrides,
-  }
-
-  return defaultUser
-}
-
-export const createTestAdmin = async () => {
-  return createTestUser({
-    email: "admin@example.com",
-    role: "admin",
-    name: "Test Admin",
-  })
-}
-
-export const generateTestToken = (userId: string, role = "user") => {
-  return jwt.sign({ userId, role }, process.env.JWT_SECRET!, { expiresIn: "1h" })
-}
-
-export const createTestFile = (overrides = {}) => {
+  const hashedPassword = await hash('password123', 10);
   return {
-    filename: "test-file.pdf",
-    originalName: "test-file.pdf",
-    mimeType: "application/pdf",
-    size: 1024,
-    owner: "test-user-id",
-    status: "pending",
-    uploadDate: new Date(),
-    description: "Test file description",
-    tags: ["test", "document"],
-    ...overrides,
-  }
-}
+    email: `test-${Date.now()}@example.com`,
+    password: hashedPassword,
+    name: 'Test User',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ...overrides
+  };
+};
 
 export const setupTestDatabase = async () => {
-  const client = new MongoClient(process.env.MONGODB_URI!)
-  await client.connect()
-  const db = client.db()
+  try {
+    // Create a new MongoDB Memory Server instance
+    mongoServer = await MongoMemoryServer.create({
+      instance: {
+        port: 27017, // Use default MongoDB port
+        dbPath: './.data/db',
+        storageEngine: 'wiredTiger',
+      },
+      binary: {
+        version: '6.0.14',
+      },
+    });
 
-  // Create test collections with indexes
-  await db.createCollection("users")
-  await db.createCollection("files")
-  await db.createCollection("auditLogs")
+    const uri = mongoServer.getUri();
+    client = new MongoClient(uri);
+    await client.connect();
 
-  await db.collection("users").createIndex({ email: 1 }, { unique: true })
-  await db.collection("files").createIndex({ owner: 1 })
+    // Set environment variables for the test database
+    process.env.MONGODB_URI = uri;
+    process.env.JWT_SECRET = 'test-secret';
+    process.env.NEXTAUTH_SECRET = 'test-secret';
+    process.env.NEXTAUTH_URL = 'http://localhost:3000';
 
-  return { client, db }
-}
-
-export const cleanupTestDatabase = async (client: MongoClient) => {
-  const db = client.db()
-  const collections = await db.listCollections().toArray()
-
-  for (const collection of collections) {
-    await db.collection(collection.name).deleteMany({})
+    return { client, db: client.db() };
+  } catch (error) {
+    console.error('Error setting up test database:', error);
+    throw error;
   }
+};
 
-  await client.close()
-}
+export const cleanupTestDatabase = async () => {
+  try {
+    if (client) {
+      await client.close();
+    }
+    if (mongoServer) {
+      await mongoServer.stop();
+    }
+  } catch (error) {
+    console.error('Error cleaning up test database:', error);
+    throw error;
+  }
+};

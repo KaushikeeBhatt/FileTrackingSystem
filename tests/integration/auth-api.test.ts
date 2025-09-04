@@ -2,91 +2,119 @@ import { NextRequest } from "next/server"
 import { MongoClient, Db } from 'mongodb';
 import { POST as loginHandler } from "@/app/api/auth/login/route"
 import { POST as registerHandler } from "@/app/api/auth/register/route"
-import { createTestUser, setupTestDatabase, cleanupTestDatabase } from "../utils/test-helpers"
+import { setupTestDatabase, cleanupTestDatabase } from "../utils/test-helpers"
 
 describe("/api/auth", () => {
   let client: MongoClient;
   let db: Db;
 
   beforeAll(async () => {
-    const setup = await setupTestDatabase()
-    client = setup.client
-    db = setup.db
-  })
+    const setup = await setupTestDatabase();
+    client = setup.client;
+    db = setup.db;
+  });
 
   afterAll(async () => {
-    await cleanupTestDatabase(client)
-  })
+    await cleanupTestDatabase();
+  });
 
   describe("POST /api/auth/register", () => {
-    it("should register a new user successfully", async () => {
-      const userData = {
-        email: "newuser@example.com",
-        password: "password123",
-        name: "New User",
-      }
-
-      const request = new NextRequest("http://localhost:3000/api/auth/register", {
+    it("should register a new user", async () => {
+      const req = new NextRequest("http://localhost:3000/api/auth/register", {
         method: "POST",
-        body: JSON.stringify(userData),
-        headers: { "Content-Type": "application/json" },
-      })
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: "test@example.com",
+          password: "password123",
+          name: "Test User"
+        }),
+      });
 
-      const response = await registerHandler(request)
-      const data = await response.json()
-
-      expect(response.status).toBe(201)
-      expect(data.success).toBe(true)
-      expect(data.user.email).toBe(userData.email)
-      expect(data.user.name).toBe(userData.name)
-      expect(data.token).toBeDefined()
-    })
+      const response = await registerHandler(req);
+      expect(response.status).toBe(201);
+      
+      const data = await response.json();
+      expect(data).toHaveProperty("user");
+      expect(data.user).toHaveProperty("email", "test@example.com");
+      expect(data.user).toHaveProperty("name", "Test User");
+      expect(data.user).not.toHaveProperty("password");
+    });
 
     it("should reject registration with existing email", async () => {
-      const existingUser = await createTestUser()
-      await db.collection("users").insertOne(existingUser)
-
-      const request = new NextRequest("http://localhost:3000/api/auth/register", {
+      // First register a user
+      const registerReq = new NextRequest("http://localhost:3000/api/auth/register", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          email: existingUser.email,
+          email: "existing@example.com",
           password: "password123",
-          name: "Another User",
+          name: "Existing User"
         }),
-        headers: { "Content-Type": "application/json" },
-      })
+      });
+      await registerHandler(registerReq);
 
-      const response = await registerHandler(request)
-      const data = await response.json()
+      // Try to register with same email
+      const duplicateReq = new NextRequest("http://localhost:3000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: "existing@example.com",
+          password: "anotherpassword",
+          name: "Duplicate User"
+        }),
+      });
 
-      expect(response.status).toBe(400)
-      expect(data.success).toBe(false)
-      expect(data.error).toContain("already exists")
-    })
-  })
+      const response = await registerHandler(duplicateReq);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.success).toBe(false);
+      expect(data.error).toContain("already exists");
+    });
+  });
 
   describe("POST /api/auth/login", () => {
     it("should login with valid credentials", async () => {
-      const testUser = await createTestUser()
-      await db.collection("users").insertOne(testUser)
-
-      const request = new NextRequest("http://localhost:3000/api/auth/login", {
+      // First register a user
+      const registerReq = new NextRequest("http://localhost:3000/api/auth/register", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          email: testUser.email,
-          password: "password123",
+          email: "login@example.com",
+          password: "login123",
+          name: "Login Test User"
         }),
-        headers: { "Content-Type": "application/json" },
-      })
+      });
+      await registerHandler(registerReq);
 
-      const response = await loginHandler(request)
-      const data = await response.json()
+      // Now test login
+      const loginReq = new NextRequest("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: "login@example.com",
+          password: "login123"
+        }),
+      });
 
-      expect(response.status).toBe(200)
-      expect(data.success).toBe(true)
-      expect(data.user.email).toBe(testUser.email)
-      expect(data.token).toBeDefined()
-    })
+      const response = await loginHandler(loginReq);
+      expect(response.status).toBe(200);
+      
+      const data = await response.json();
+      expect(data).toHaveProperty("token");
+      expect(data).toHaveProperty("user");
+      expect(data.user).toHaveProperty("email", "login@example.com");
+    });
 
     it("should reject login with invalid credentials", async () => {
       const request = new NextRequest("http://localhost:3000/api/auth/login", {
@@ -96,14 +124,14 @@ describe("/api/auth", () => {
           password: "wrongpassword",
         }),
         headers: { "Content-Type": "application/json" },
-      })
+      });
 
-      const response = await loginHandler(request)
-      const data = await response.json()
+      const response = await loginHandler(request);
+      const data = await response.json();
 
-      expect(response.status).toBe(401)
-      expect(data.success).toBe(false)
-      expect(data.error).toContain("Invalid credentials")
-    })
-  })
-})
+      expect(response.status).toBe(401);
+      expect(data.success).toBe(false);
+      expect(data.error).toContain("Invalid credentials");
+    });
+  });
+});

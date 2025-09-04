@@ -9,8 +9,8 @@ const customJestConfig = {
   testEnvironment: "node",
   testMatch: ["<rootDir>/tests/integration/**/*.test.{js,jsx,ts,tsx}"],
   testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/"],
-  moduleNameMapping: {
-    "^@/(.*)$": "<rootDir>/$1",
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/$1',
   },
   testTimeout: 30000,
 }
