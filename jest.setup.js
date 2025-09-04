@@ -1,17 +1,33 @@
-// Import Next.js specific Web APIs
-import { NextRequest, NextResponse } from 'next/server';
-// Import Jest types and utilities
+// Import required Node.js utilities
+import { TextEncoder, TextDecoder } from 'util';
 import { jest } from '@jest/globals';
 import '@testing-library/jest-dom';
-import { TextEncoder, TextDecoder } from 'util';
 
-// Set global Web API objects for Jest
-Object.defineProperty(global, 'Request', {
-  value: NextRequest,
-});
-Object.defineProperty(global, 'Response', {
-  value: NextResponse,
-});
+// Polyfill for TextEncoder and TextDecoder
+if (typeof global.TextEncoder === 'undefined') {
+  global.TextEncoder = TextEncoder;
+}
+if (typeof global.TextDecoder === 'undefined') {
+  global.TextDecoder = TextDecoder;
+}
+
+// Mock Next.js server components
+jest.mock('next/server', () => ({
+  NextRequest: class {
+    constructor(input, init) {
+      this.url = input?.url || '';
+      this.method = (init?.method || 'GET').toUpperCase();
+      this.headers = new Headers(init?.headers);
+    }
+  },
+  NextResponse: {
+    json: (data, init) => ({
+      json: () => Promise.resolve(data),
+      status: init?.status || 200,
+      headers: new Headers(init?.headers)
+    })
+  }
+}));
 
 // Set test timeout
 jest.setTimeout(60000);
@@ -25,6 +41,7 @@ jest.mock('next/navigation', () => ({
   }),
   useSearchParams: () => ({
     get: jest.fn(),
+    getAll: jest.fn(),
   }),
   usePathname: () => '/',
 }));
@@ -32,60 +49,37 @@ jest.mock('next/navigation', () => ({
 // Set up environment variables
 process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET = 'test-jwt-secret-123';
-process.env.NEXTAUTH_SECRET = 'test-secret-123';
+process.env.MONGODB_URI = 'mongodb://localhost:27017/test-db';
 process.env.NEXTAUTH_URL = 'http://localhost:3000';
-process.env.MONGODB_URI = 'mongodb://localhost:27017/test';
+process.env.NEXTAUTH_SECRET = 'test-nextauth-secret';
 
-// Mock global.fetch
+// Mock global fetch
 global.fetch = jest.fn(() =>
   Promise.resolve({
     ok: true,
     status: 200,
-    json: async () => ({}),
+    json: () => Promise.resolve({}),
   })
 );
 
-// Add TextEncoder and TextDecoder for MongoDB related tests
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
+// Mock console methods to reduce test noise
+const consoleError = console.error;
+const consoleWarn = console.warn;
 
-// Mock other Web APIs and browser objects
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
+beforeAll(() => {
+  console.error = (message) => {
+    if (!message.toString().includes('Error: Not implemented: window.scrollTo')) {
+      consoleError(message);
+    }
+  };
+  console.warn = (message) => {
+    if (!message.toString().includes('Using the `next/future/image`')) {
+      consoleWarn(message);
+    }
+  };
 });
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  clear: jest.fn(),
-  removeItem: jest.fn(),
-  key: jest.fn(),
-  length: 0,
-};
-global.localStorage = localStorageMock;
-
-// Mock MongoDB connection
-jest.mock('@/lib/mongodb', () => ({
-  connectToDatabase: jest.fn().mockResolvedValue({
-    db: jest.fn().mockReturnThis(),
-    collection: jest.fn().mockReturnThis(),
-    find: jest.fn().mockReturnThis(),
-    findOne: jest.fn().mockResolvedValue(null),
-    insertOne: jest.fn().mockResolvedValue({ insertedId: 'test-id' }),
-    updateOne: jest.fn().mockResolvedValue({ modifiedCount: 1 }),
-    deleteOne: jest.fn().mockResolvedValue({ deletedCount: 1 }),
-    toArray: jest.fn().mockResolvedValue([]),
-    close: jest.fn(),
-  }),
-}));
+afterAll(() => {
+  console.error = consoleError;
+  console.warn = consoleWarn;
+});
