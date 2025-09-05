@@ -5,9 +5,17 @@ import { validateEnvironment } from "./env-validation"
 import { AuditOperations } from "./audit-operations"
 import type { User } from "./models/user"
 
-const env = validateEnvironment()
-const JWT_SECRET = env.JWT_SECRET
+let env: ReturnType<typeof validateEnvironment>;
+let JWT_SECRET: string;
 const JWT_EXPIRES_IN = "7d"
+
+// Initialize the environment variables
+async function initializeAuth() {
+  if (!env) {
+    env = await validateEnvironment();
+    JWT_SECRET = env.JWT_SECRET;
+  }
+}
 
 export interface AuthUser {
   id: string
@@ -27,7 +35,8 @@ export class AuthService {
     return await bcrypt.compare(password, hashedPassword)
   }
 
-  static generateToken(user: AuthUser): string {
+  static async generateToken(user: AuthUser): Promise<string> {
+    await initializeAuth();
     return jwt.sign(
       {
         id: user.id,
@@ -42,12 +51,13 @@ export class AuthService {
     )
   }
 
-  static verifyToken(token: string): AuthUser | null {
+  static async verifyToken(token: string): Promise<AuthUser | null> {
+    await initializeAuth();
     if (!token || token === "null") {
       return null
     }
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as AuthUser & { iat: number; exp: number }
+      const decoded = jwt.verify(token, JWT_SECRET) as AuthUser & { iat: number; exp: number }
       return {
         id: decoded.id,
         userId: decoded.userId,
@@ -62,6 +72,7 @@ export class AuthService {
   }
 
   static async login(email: string, password: string): Promise<{ user: AuthUser; token: string } | null> {
+    await initializeAuth();
     const user = await UserOperations.getUserByEmail(email)
     if (!user) {
       return null
@@ -81,7 +92,7 @@ export class AuthService {
       department: user.department,
     }
 
-    const token = this.generateToken(authUser)
+    const token = await this.generateToken(authUser)
 
     // Log successful login
     await AuditOperations.createLog({
@@ -103,6 +114,7 @@ export class AuthService {
     role?: "admin" | "manager" | "user"
     department?: string
   }): Promise<{ user: AuthUser; token: string } | null> {
+    await initializeAuth();
     // Check if user already exists
     const existingUser = await UserOperations.getUserByEmail(userData.email)
     if (existingUser) {
@@ -131,7 +143,7 @@ export class AuthService {
       department: userData.department,
     }
 
-    const token = this.generateToken(authUser)
+    const token = await this.generateToken(authUser)
 
     // Log successful registration
     await AuditOperations.createLog({
@@ -147,6 +159,7 @@ export class AuthService {
   }
 }
 
-export function verifyToken(token: string): AuthUser | null {
-  return AuthService.verifyToken(token)
+export async function verifyToken(token: string): Promise<AuthUser | null> {
+  await initializeAuth();
+  return AuthService.verifyToken(token);
 }
