@@ -1,35 +1,23 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { checkRateLimit, RATE_LIMITS, defaultKeyGenerator, roleBasedKeyGenerator, type MaxRequests } from "../rate-limiter"
+import { 
+  checkRateLimit, 
+  defaultKeyGenerator, 
+  roleBasedKeyGenerator, 
+  getRateLimitConfig,
+  type RateLimitType 
+} from "../rate-limiter"
 
 export function withRateLimit(
   handler: Function,
-  limitType: keyof typeof RATE_LIMITS = "GENERAL",
+  limitType: RateLimitType = "GENERAL",
   useRoleBasedLimits = false,
 ) {
   return async (request: NextRequest, ...args: any[]) => {
     try {
-      // Get the appropriate rate limit config
-      let config = { ...RATE_LIMITS[limitType] }
-
-      // Adjust limits based on user role if enabled
-      if (useRoleBasedLimits && (request as any).user) {
-        const user = (request as any).user
-        if (user.role === "admin") {
-          // Admins get 3x the normal limit, but cap at 1000 (max allowed by MaxRequests)
-          const newLimit = Math.min(config.maxRequests * 3, 1000) as MaxRequests
-          config = {
-            ...config,
-            maxRequests: newLimit,
-          }
-        } else if (user.role === "manager") {
-          // Managers get 2x the normal limit, but cap at 1000 (max allowed by MaxRequests)
-          const newLimit = Math.min(config.maxRequests * 2, 1000) as MaxRequests
-          config = {
-            ...config,
-            maxRequests: newLimit,
-          }
-        }
-      }
+      // Get the appropriate rate limit config based on user role
+      const user = (request as any).user;
+      const role = useRoleBasedLimits && user?.role;
+      const config = getRateLimitConfig(limitType, role);
 
       const keyGenerator = useRoleBasedLimits ? roleBasedKeyGenerator : defaultKeyGenerator
       const { allowed, remaining, resetTime } = await checkRateLimit(request, config, keyGenerator)
@@ -67,7 +55,7 @@ export function withRateLimit(
   }
 }
 
-export function rateLimit(limitType: keyof typeof RATE_LIMITS = "GENERAL") {
+export function rateLimit(limitType: RateLimitType = "GENERAL") {
   return (handler: Function) => withRateLimit(handler, limitType, true)
 }
 
@@ -75,7 +63,7 @@ export function rateLimit(limitType: keyof typeof RATE_LIMITS = "GENERAL") {
 export function withAuthAndRateLimit(
   handler: Function,
   requiredRoles?: string[],
-  limitType: keyof typeof RATE_LIMITS = "GENERAL",
+  limitType: RateLimitType = "GENERAL",
 ) {
   return withRateLimit(
     async (request: NextRequest, ...args: any[]) => {

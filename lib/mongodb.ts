@@ -5,14 +5,19 @@ declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined
 }
 
-const env = validateEnvironment()
+// Validate environment variables
+const env = validateEnvironment();
+if (!env.isValid || !env.config) {
+  throw new Error(`Environment validation failed: ${env.errors?.join(', ')}`);
+}
+const { config: envConfig } = env;
 
 // In test environment, we want to create a new connection for each test
 const isTestEnvironment = process.env.NODE_ENV === 'test';
 
 // Only create a global connection in non-test environments
 if (!global._mongoClientPromise && !isTestEnvironment) {
-  const client = new MongoClient(env.MONGODB_URI)
+  const client = new MongoClient(envConfig.MONGODB_URI);
   global._mongoClientPromise = client.connect()
     .then(connectedClient => {
       console.log("MongoDB connected successfully");

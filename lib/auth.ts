@@ -5,15 +5,20 @@ import { validateEnvironment } from "./env-validation"
 import { AuditOperations } from "./audit-operations"
 import type { User } from "./models/user"
 
-let env: ReturnType<typeof validateEnvironment>;
+import type { EnvConfig } from "./env-validation";
+
+let env: { isValid: boolean; config: EnvConfig | null; errors: string[] };
 let JWT_SECRET: string;
-const JWT_EXPIRES_IN = "7d"
+const JWT_EXPIRES_IN = "7d";
 
 // Initialize the environment variables
 async function initializeAuth() {
   if (!env) {
-    env = await validateEnvironment();
-    JWT_SECRET = env.JWT_SECRET;
+    env = validateEnvironment();
+    if (!env.isValid || !env.config) {
+      throw new Error(`Environment validation failed: ${env.errors.join(', ')}`);
+    }
+    JWT_SECRET = env.config.JWT_SECRET;
   }
 }
 

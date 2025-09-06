@@ -3,12 +3,18 @@ import { ObjectId } from "mongodb"
 import { AuditOperations } from "./audit-operations"
 import { validateEnvironment } from "./env-validation"
 import type { FileRecord } from '@/lib/models/file'
+
 import type { AuthUser } from "@/lib/auth"
 import * as crypto from "crypto"
 import fs from "fs/promises"
 import path from "path"
 
-const env = validateEnvironment()
+// Initialize environment variables
+const env = validateEnvironment();
+if (!env.isValid || !env.config) {
+  throw new Error(`Environment validation failed: ${env.errors?.join(', ')}`);
+}
+const { config: envConfig } = env;
 
 export class FileOperations {
   private static uploadDir = path.join(process.cwd(), "uploads")
@@ -46,13 +52,12 @@ export class FileOperations {
   ): Promise<FileRecord & { id: string }> {
     const { buffer, originalName, mimeType } = file
 
-    const maxFileSize = env.MAX_FILE_SIZE ? parseInt(env.MAX_FILE_SIZE.toString()) : 10 * 1024 * 1024; // Default 10MB
+    const maxFileSize = envConfig.MAX_FILE_SIZE;
     if (buffer.length > maxFileSize) {
       throw new Error(`File size exceeds the limit of ${(maxFileSize / (1024 * 1024)).toFixed(2)}MB`)
     }
     
-    const allowedTypes = env.ALLOWED_FILE_TYPES ? 
-      env.ALLOWED_FILE_TYPES.split(",").map((t) => t.trim()) : [];
+    const allowedTypes = envConfig.ALLOWED_FILE_TYPES.split(",").map((t: string) => t.trim());
       
     if (allowedTypes.length > 0 && !allowedTypes.includes(mimeType)) {
       throw new Error(`File type '${mimeType}' is not allowed.`)

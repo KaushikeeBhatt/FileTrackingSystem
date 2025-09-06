@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { createClient } from 'redis';
 
-interface RateLimitConfig {
+export interface RateLimitConfig {
   windowMs: number;
   maxRequests: number;
   keyGenerator?: (request: NextRequest) => string;
@@ -148,4 +148,24 @@ export async function checkRateLimit(
   }
 }
 
-export type { RateLimitConfig };
+// RateLimitConfig is already exported at the interface declaration
+
+export type RateLimitType = keyof typeof RATE_LIMITS;
+
+export function getRateLimitConfig(type: RateLimitType, role?: 'admin' | 'manager'): RateLimitConfig {
+  const config = { ...RATE_LIMITS[type] };
+  
+  if (role === 'admin') {
+    return {
+      ...config,
+      maxRequests: Math.min(config.maxRequests * 3, 1000)
+    };
+  } else if (role === 'manager') {
+    return {
+      ...config,
+      maxRequests: Math.min(config.maxRequests * 2, 1000)
+    };
+  }
+  
+  return config;
+}
