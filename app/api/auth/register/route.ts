@@ -19,7 +19,7 @@ async function registerHandler(request: NextRequest) {
     const response = NextResponse.json({
       user: result.user,
       token: result.token,
-    })
+    }, { status: 201 })
 
     // Set HTTP-only cookie for additional security
     response.cookies.set("auth-token", result.token, {

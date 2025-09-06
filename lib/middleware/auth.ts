@@ -13,7 +13,7 @@ export function withAuth(handler: Function, requiredRoles?: string[]) {
         return NextResponse.json({ error: "Authentication required" }, { status: 401 })
       }
 
-      const user = AuthService.verifyToken(token)
+      const user = await AuthService.verifyToken(token)
       console.log("Token verification result:", user)
 
       if (!user) {
@@ -21,14 +21,16 @@ export function withAuth(handler: Function, requiredRoles?: string[]) {
       }
 
       // Check role permissions
-      if (requiredRoles && !requiredRoles.includes(user.role)) {
+      if (requiredRoles && requiredRoles.length > 0 && !requiredRoles.includes(user.role)) {
         return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 })
       }
+      
       // Add user to request context
       ;(request as any).user = user
 
       return handler(request, ...args)
     } catch (error) {
+      console.error("Authentication error:", error)
       return NextResponse.json({ error: "Authentication failed" }, { status: 401 })
     }
   }

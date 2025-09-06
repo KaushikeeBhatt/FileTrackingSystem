@@ -1,5 +1,142 @@
 // Fixed the missing properties by making them optional
-import { Collection, Document, ObjectId } from 'mongodb';
+import { Collection, Document, ObjectId, MongoClient, Db, IndexSpecification, IndexDescription } from 'mongodb';
+import { validateEnvironment } from './env-validation';
+
+let client: MongoClient | null = null;
+let db: Db | null = null;
+
+// Connection management
+export async function connectToDatabase() {
+  if (client && db) {
+    return { client, db };
+  }
+
+  const envValidation = validateEnvironment();
+  if (!envValidation.isValid || !envValidation.config) {
+    throw new Error(`Invalid environment configuration: ${envValidation.errors.join(', ')}`);
+  }
+  const env = envValidation.config;
+
+  client = new MongoClient(env.MONGODB_URI);
+  await client.connect();
+  db = client.db(); 
+
+  return { client, db };
+}
+
+export async function disconnectFromDatabase() {
+  if (client) {
+    await client.close();
+    client = null;
+    db = null;
+  }
+  return { success: true };
+}
+
+// Indexing
+export async function createIndexes(dbInstance?: Db) {
+  const targetDb = dbInstance || (await connectToDatabase()).db;
+  if (!targetDb) {
+    throw new Error('Database not connected');
+  }
+
+  const collections: { name: string; indexes: IndexDescription[] }[] = [
+    {
+      name: 'files',
+      indexes: [
+        { key: { fileName: 'text', tags: 'text' } },
+        { key: { ownerId: 1 } },
+        { key: { tags: 1 } },
+      ],
+    },
+    {
+      name: 'users',
+      indexes: [{ key: { email: 1 }, unique: true }],
+    },
+    {
+      name: 'auditLogs',
+      indexes: [{ key: { timestamp: -1 } }, { key: { userId: 1 } }],
+    },
+  ];
+
+  let indexesCreated = 0;
+  for (const collection of collections) {
+    const coll = targetDb.collection(collection.name);
+    await coll.createIndexes(collection.indexes);
+    indexesCreated += collection.indexes.length;
+  }
+
+  return { success: true, indexesCreated };
+}
+
+// Health and maintenance
+export async function performHealthCheck(dbInstance?: Db) {
+  const targetDb = dbInstance || (await connectToDatabase()).db;
+  if (!targetDb) {
+    return { status: 'unhealthy', database: { connected: false, error: 'Database not connected' } };
+  }
+
+  try {
+    await targetDb.admin().ping();
+    const collections = await targetDb.listCollections().toArray();
+    const collectionStats: { [key: string]: { count: number | undefined; size: number | undefined; } } = {};
+    for (const col of collections) {
+      const stats = await targetDb.collection(col.name).stats();
+      collectionStats[col.name] = { count: stats.count, size: stats.size };
+    }
+
+    return {
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      database: { connected: true },
+      collections: collectionStats,
+    };
+  } catch (error) {
+    return {
+      status: 'unhealthy',
+      database: { connected: false, error: error instanceof Error ? error.message : String(error) },
+    };
+  }
+}
+
+export async function cleanupOldRecords(dbInstance: Db, collectionName: string, days: number) {
+  const targetDb = dbInstance || (await connectToDatabase()).db;
+  if (!targetDb) {
+    throw new Error('Database not connected');
+  }
+
+  const collection = targetDb.collection(collectionName);
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - days);
+
+  const result = await collection.deleteMany({ createdAt: { $lt: cutoffDate } });
+  return { deletedCount: result.deletedCount };
+}
+
+export async function backupCollection(dbInstance: Db, collectionName: string) {
+  const targetDb = dbInstance || (await connectToDatabase()).db;
+  if (!targetDb) {
+    throw new Error('Database not connected');
+  }
+
+  const collection = targetDb.collection(collectionName);
+  const data = await collection.find({}).toArray();
+
+  return {
+    collectionName,
+    timestamp: new Date().toISOString(),
+    recordCount: data.length,
+    data,
+  };
+}
+
+export async function validateConnection(clientInstance: MongoClient) {
+  try {
+    return (clientInstance as any).topology.isConnected();
+  } catch (error) {
+    return false;
+  }
+}
 
 export interface User extends Document {
   _id?: ObjectId;
@@ -64,7 +201,7 @@ export interface Notification extends Document {
 }
 
 // Mock functions to represent database operations
-async function getCollection<T extends Document>(collectionName: string): Promise<Collection<T>> {
+export async function getCollection<T extends Document>(collectionName: string): Promise<Collection<T>> {
   // In a real app, this would connect to MongoDB.
   // For now, it's a placeholder.
   console.log(`Getting collection: ${collectionName}`);

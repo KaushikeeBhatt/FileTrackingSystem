@@ -5,9 +5,33 @@ import { setupTestDatabase, getTestDb } from "../utils/test-helpers";
 
 // Mock the rate limiter to avoid rate limiting in tests
 jest.mock('@/lib/rate-limiter', () => ({
+  RATE_LIMITS: {
+    AUTH: {
+      windowMs: 300000,
+      maxRequests: 10,
+    },
+    GENERAL: {
+      windowMs: 60000,
+      maxRequests: 100,
+    },
+  },
+  checkRateLimit: jest.fn().mockResolvedValue({
+    allowed: true,
+    remaining: 10,
+    resetTime: Date.now() + 300000,
+  }),
+  defaultKeyGenerator: jest.fn().mockReturnValue('test-key'),
+  roleBasedKeyGenerator: jest.fn().mockReturnValue('test-key'),
   rateLimiter: {
     consume: jest.fn().mockResolvedValue(true),
   },
+}));
+
+// Mock the rate limit middleware to bypass rate limiting in tests
+jest.mock('@/lib/middleware/rate-limit', () => ({
+  withRateLimit: (handler: any, limitType?: any) => handler,
+  rateLimit: (limitType?: any) => (handler: any) => handler,
+  withAuthAndRateLimit: (handler: any, requiredRoles?: any, limitType?: any) => handler,
 }));
 
 describe("/api/auth", () => {
