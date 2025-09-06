@@ -33,11 +33,12 @@ export interface AuthUser {
 
 export class AuthService {
   static async hashPassword(password: string): Promise<string> {
-    return await bcrypt.hash(password, 12)
+    const salt = await bcrypt.genSalt(12);
+    return await bcrypt.hash(password, salt);
   }
 
   static async verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
-    return await bcrypt.compare(password, hashedPassword)
+    return await bcrypt.compare(password, hashedPassword);
   }
 
   static async generateToken(user: AuthUser): Promise<string> {

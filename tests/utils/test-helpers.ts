@@ -1,7 +1,9 @@
-import { MongoClient, Db, ObjectId } from 'mongodb';
+import { MongoClient, Db, ObjectId, Collection } from 'mongodb';
+import { jest } from '@jest/globals';
 
 // Local MongoDB connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/test-file-tracking';
+const MONGODB_URI = 'mongodb://localhost:27017/test-file-tracking';
+const TEST_DB_NAME = 'test-file-tracking';
 let client: MongoClient;
 
 // Set test environment variables
@@ -67,6 +69,7 @@ export const setupTestDatabase = async () => {
   }
 
   try {
+    // Connect to local MongoDB
     client = new MongoClient(MONGODB_URI, {
       connectTimeoutMS: 30000,
       socketTimeoutMS: 45000,
@@ -75,19 +78,29 @@ export const setupTestDatabase = async () => {
     });
     
     await client.connect();
-    console.log('Connected to local MongoDB at', MONGODB_URI);
     
-    // Set up test collections if they don't exist
-    const db = client.db();
-    const collections = await db.listCollections().toArray();
-    const collectionNames = collections.map(c => c.name);
+    // Get the test database
+    const db = client.db(TEST_DB_NAME);
     
-    const requiredCollections = ['files', 'users', 'audit', 'notifications'];
-    for (const coll of requiredCollections) {
-      if (!collectionNames.includes(coll)) {
-        await db.createCollection(coll);
-      }
-    }
+    // Drop the test database to ensure a clean state
+    await db.dropDatabase();
+    
+    // Create collections
+    await db.createCollection('files');
+    await db.createCollection('users');
+    await db.createCollection('audit');
+    await db.createCollection('notifications');
+    
+    // Set up initial test data
+    const users = db.collection('users');
+    await users.insertOne({
+      _id: new ObjectId(),
+      email: 'test@example.com',
+      password: 'hashedpassword',
+      role: 'user',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
     
     return client;
   } catch (error) {
@@ -99,9 +112,14 @@ export const setupTestDatabase = async () => {
 export const stopTestDatabase = async () => {
   try {
     if (client) {
+      // Clean up test database
+      const db = client.db(TEST_DB_NAME);
+      await db.dropDatabase();
+      
+      // Close the connection
       await client.close();
       client = undefined as unknown as MongoClient;
-      console.log('MongoDB connection closed');
+      console.log('MongoDB connection closed and test database dropped');
     }
   } catch (error) {
     console.error('Error closing MongoDB connection:', error);

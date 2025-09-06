@@ -82,9 +82,13 @@ describe('Auth Utils', () => {
     });
 
     it('should throw error without JWT_SECRET', () => {
-      delete process.env.JWT_SECRET;
+      const originalJwtSecret = process.env.JWT_SECRET;
+      process.env.JWT_SECRET = '';
       
       expect(() => generateToken({ id: 'test-id', userId: 'test', email: 'test@test.com', name: 'test', role: 'user' as const })).toThrow('JWT_SECRET');
+      
+      // Restore the original JWT_SECRET
+      process.env.JWT_SECRET = originalJwtSecret;
     });
   });
 

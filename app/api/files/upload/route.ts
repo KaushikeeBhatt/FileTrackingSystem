@@ -10,7 +10,7 @@ async function uploadHandler(request: NextRequest) {
 
     const file = formData.get("file") as File
     if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 })
+      return NextResponse.json({ success: false, error: "No file provided" }, { status: 400 })
     }
 
     const category = formData.get("category") as string
@@ -19,7 +19,7 @@ async function uploadHandler(request: NextRequest) {
     const tagsString = formData.get("tags") as string
 
     if (!category) {
-      return NextResponse.json({ error: "Category is required" }, { status: 400 })
+      return NextResponse.json({ success: false, error: "Category is required" }, { status: 400 })
     }
 
     const tags = tagsString
@@ -42,18 +42,31 @@ async function uploadHandler(request: NextRequest) {
       buffer,
     }
 
-    const fileId = await FileOperations.uploadFile(uploadedFile, user, {
-      department,
-      category,
-      tags,
-      description,
-    })
+    try {
+      const fileId = await FileOperations.uploadFile(uploadedFile, user, {
+        department,
+        category,
+        tags,
+        description,
+      })
 
-    return NextResponse.json({
-      success: true,
-      fileId: fileId.toString(),
-      message: "File uploaded successfully",
-    })
+      return NextResponse.json({
+        success: true,
+        fileId: fileId.toString(),
+        message: "File uploaded successfully",
+      })
+    } catch (error: unknown) {
+      console.error("Upload error:", error)
+      const errorMessage = error instanceof Error ? error.message : 'File upload failed';
+      const statusCode = errorMessage.includes('exceeds the limit') ? 400 : 500;
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: errorMessage
+        },
+        { status: statusCode }
+      )
+    }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred"
     console.error(`[File Upload Error]: ${errorMessage}`, { error })
