@@ -9,15 +9,24 @@ async function bulkApproveHandler(request: NextRequest) {
     const { fileIds } = await request.json()
 
     if (!fileIds || !Array.isArray(fileIds) || fileIds.length === 0) {
-      return NextResponse.json({ error: "File IDs are required" }, { status: 400 })
+      return NextResponse.json({ success: false, error: "File IDs are required" }, { status: 400 })
     }
 
-    const count = await AdminOperations.bulkApproveFiles(fileIds, user.id)
+    const result = await AdminOperations.bulkApproveFiles(fileIds, user.id)
 
-    return NextResponse.json({ count, message: `Approved ${count} files successfully` })
+    // Handle both object and number return types
+    const approved = typeof result === 'object' ? (result as any).approved : result
+    const failed = typeof result === 'object' ? (result as any).failed : 0
+
+    return NextResponse.json({ 
+      success: true, 
+      approved,
+      failed,
+      message: `Approved ${approved} files successfully` 
+    })
   } catch (error) {
     console.error("Bulk approve error:", error)
-    return NextResponse.json({ error: "Failed to approve files" }, { status: 500 })
+    return NextResponse.json({ success: false, error: "Failed to approve files" }, { status: 500 })
   }
 }
 

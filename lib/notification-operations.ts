@@ -53,15 +53,19 @@ export class NotificationOperations {
   static async markNotificationAsRead(notificationId: ObjectId, userId: ObjectId) {
     const db = await this.getDb()
 
-    return await db
+    const result = await db
       .collection("notifications")
-      .updateOne({ _id: notificationId, userId }, { $set: { isRead: true } })
+      .updateOne({ _id: notificationId, userId }, { $set: { read: true, updatedAt: new Date() } })
+    
+    return { success: result.modifiedCount > 0 }
   }
 
   static async markAllNotificationsAsRead(userId: ObjectId) {
     const db = await this.getDb()
 
-    return await db.collection("notifications").updateMany({ userId, isRead: false }, { $set: { isRead: true } })
+    const result = await db.collection("notifications").updateMany({ userId, read: false }, { $set: { read: true, updatedAt: new Date() } })
+    
+    return { success: true, updatedCount: result.modifiedCount }
   }
 
   static async getUnreadNotificationCount(userId: ObjectId) {
@@ -69,17 +73,19 @@ export class NotificationOperations {
 
     return await db.collection("notifications").countDocuments({
       userId,
-      isRead: false,
+      read: false,
     })
   }
 
   static async deleteNotification(notificationId: ObjectId, userId: ObjectId) {
     const db = await this.getDb()
 
-    return await db.collection("notifications").deleteOne({
+    const result = await db.collection("notifications").deleteOne({
       _id: notificationId,
       userId,
     })
+    
+    return { success: result.deletedCount > 0 }
   }
 
   static async getUserNotificationPreferences(userId: ObjectId): Promise<NotificationPreferences | null> {
@@ -145,3 +151,7 @@ export const deleteNotification = NotificationOperations.deleteNotification.bind
 export const getUserNotificationPreferences = NotificationOperations.getUserNotificationPreferences.bind(NotificationOperations)
 export const updateNotificationPreferences = NotificationOperations.updateNotificationPreferences.bind(NotificationOperations)
 export const cleanupExpiredNotifications = NotificationOperations.cleanupExpiredNotifications.bind(NotificationOperations)
+
+// Aliases for compatibility
+export const getUserPreferences = getUserNotificationPreferences
+export const updateUserPreferences = updateNotificationPreferences

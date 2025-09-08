@@ -14,7 +14,7 @@ async function auditStatsHandler(request: NextRequest) {
 
     const stats = await AuditOperations.getAuditStats(filters, user.role, user.id)
 
-    return NextResponse.json({ stats })
+    return NextResponse.json({ success: true, stats })
   } catch (error) {
     console.error("Audit stats error:", error)
     return NextResponse.json({ error: "Failed to fetch audit stats" }, { status: 500 })

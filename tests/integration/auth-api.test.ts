@@ -34,6 +34,13 @@ jest.mock('@/lib/middleware/rate-limit', () => ({
   withAuthAndRateLimit: (handler: any, requiredRoles?: any, limitType?: any) => handler,
 }));
 
+// Mock audit operations to prevent audit logging errors
+jest.mock('@/lib/audit-operations', () => ({
+  AuditOperations: {
+    createLog: jest.fn().mockResolvedValue(undefined),
+  },
+}));
+
 describe("/api/auth", () => {
   // Set up test database before all tests
   setupTestDatabase();
@@ -54,11 +61,11 @@ describe("/api/auth", () => {
       const data = await response.json();
 
       expect(response.status).toBe(201);
-      expect(data.user).toBeDefined();
-      expect(data.user.email).toBe("test@example.com");
-      expect(data.user.name).toBe("Test User");
-      expect(data.user.password).toBeUndefined();
-      expect(data.token).toBeDefined();
+      expect(data).toHaveProperty('user');
+      expect(data.user).toHaveProperty('email', 'test@example.com');
+      expect(data.user).toHaveProperty('name', 'Test User');
+      expect(data.user).not.toHaveProperty('password');
+      expect(data).toHaveProperty('token');
     });
 
     it("should reject registration with existing email", async () => {
@@ -90,7 +97,7 @@ describe("/api/auth", () => {
       const data = await response.json();
 
       expect(response.status).toBe(400);
-      expect(data.error).toBe("User already exists");
+      expect(data).toHaveProperty('error', 'Registration failed. Email may already be in use.');
     });
   });
 
@@ -125,9 +132,9 @@ describe("/api/auth", () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.user).toBeDefined();
-      expect(data.user.email).toBe(testUser.email);
-      expect(data.token).toBeDefined();
+      expect(data).toHaveProperty('user');
+      expect(data.user).toHaveProperty('email', testUser.email);
+      expect(data).toHaveProperty('token');
     });
 
     it("should reject login with invalid password", async () => {
@@ -144,7 +151,7 @@ describe("/api/auth", () => {
       const data = await response.json();
 
       expect(response.status).toBe(401);
-      expect(data.error).toBe("Invalid credentials");
+      expect(data).toHaveProperty('error', 'Invalid credentials');
     });
 
     it("should reject login with non-existent email", async () => {
@@ -161,7 +168,7 @@ describe("/api/auth", () => {
       const data = await response.json();
 
       expect(response.status).toBe(401);
-      expect(data.error).toBe("Invalid credentials");
+      expect(data).toHaveProperty('error', 'Invalid credentials');
     });
   });
 });

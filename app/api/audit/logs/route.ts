@@ -22,11 +22,11 @@ async function auditLogsHandler(request: NextRequest) {
 
     const result = await AuditOperations.getAuditTrail(filters, user, limit, skip)
 
-    return NextResponse.json(result)
+    return NextResponse.json({ success: true, ...result })
   } catch (error) {
     console.error("Audit logs error:", error)
     return NextResponse.json({ error: "Failed to fetch audit logs" }, { status: 500 })
   }
 }
 
-export const GET = withAuth(auditLogsHandler, ["admin", "manager", "user"])
+export const GET = withAuth(auditLogsHandler, ["admin", "manager"])

@@ -11,10 +11,10 @@ async function suggestionsHandler(request: NextRequest) {
 
     const suggestions = await SearchOperations.getSearchSuggestions(query, user.id, user.role)
 
-    return NextResponse.json({ suggestions })
+    return NextResponse.json({ success: true, suggestions })
   } catch (error) {
     console.error("Suggestions error:", error)
-    return NextResponse.json({ error: "Failed to get suggestions" }, { status: 500 })
+    return NextResponse.json({ success: false, error: "Failed to get suggestions" }, { status: 500 })
   }
 }
 

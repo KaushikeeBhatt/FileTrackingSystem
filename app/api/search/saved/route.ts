@@ -8,10 +8,10 @@ async function savedSearchesHandler(request: NextRequest) {
 
     const searches = await SearchOperations.getSavedSearches(user.id)
 
-    return NextResponse.json({ searches })
+    return NextResponse.json({ success: true, searches })
   } catch (error) {
     console.error("Saved searches error:", error)
-    return NextResponse.json({ error: "Failed to get saved searches" }, { status: 500 })
+    return NextResponse.json({ success: false, error: "Failed to get saved searches" }, { status: 500 })
   }
 }
 

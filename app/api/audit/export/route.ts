@@ -8,6 +8,13 @@ async function auditExportHandler(request: NextRequest) {
     const user = (request as any).user
     const { searchParams } = new URL(request.url)
 
+    const format = (searchParams.get("format") as "csv" | "json") || "csv"
+    
+    // Validate format parameter
+    if (!["csv", "json"].includes(format)) {
+      return NextResponse.json({ error: "Invalid format parameter. Must be 'csv' or 'json'" }, { status: 400 })
+    }
+
     const filters = {
       userId: searchParams.get("userId") || undefined,
       action: searchParams.get("action") || undefined,
@@ -17,8 +24,6 @@ async function auditExportHandler(request: NextRequest) {
       dateTo: searchParams.get("dateTo") ? new Date(searchParams.get("dateTo")!) : undefined,
       success: searchParams.get("success") ? searchParams.get("success") === "true" : undefined,
     }
-
-    const format = (searchParams.get("format") as "csv" | "json") || "csv"
 
     const report = await AuditOperations.exportAuditReport(filters, user, format)
 
@@ -37,4 +42,4 @@ async function auditExportHandler(request: NextRequest) {
   }
 }
 
-export const GET = rateLimit("ADMIN")(withAuth(auditExportHandler, ["admin", "manager"]))
+export const GET = rateLimit("ADMIN")(withAuth(auditExportHandler, ["admin"]))

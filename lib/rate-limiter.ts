@@ -62,13 +62,16 @@ export function defaultKeyGenerator(request: NextRequest): string {
 // Role-based key generator for different limits based on user role
 export function roleBasedKeyGenerator(request: NextRequest): string {
   const user = (request as any).user;
-  const ip = defaultKeyGenerator(request);
+  
+  // Get IP address directly
+  const forwarded = request.headers.get("x-forwarded-for");
+  const ip = forwarded ? forwarded.split(",")[0] : request.headers.get("x-real-ip") || "unknown";
   
   if (user) {
-    return `${user.role || 'user'}:${user.id}:${ip}`;
+    return `${user.role || 'user'}:${user.id}:ip:${ip}`;
   }
   
-  return ip;
+  return `ip:${ip}`;
 }
 
 // Create Redis client

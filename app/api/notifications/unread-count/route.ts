@@ -8,10 +8,10 @@ async function getUnreadCountHandler(request: NextRequest) {
     const user = (request as any).user
     const count = await getUnreadNotificationCount(new ObjectId(user.id))
 
-    return NextResponse.json({ count })
+    return NextResponse.json({ success: true, count })
   } catch (error) {
     console.error("Get unread count error:", error)
-    return NextResponse.json({ error: "Failed to fetch unread count" }, { status: 500 })
+    return NextResponse.json({ success: false, error: "Failed to fetch unread count" }, { status: 500 })
   }
 }
 

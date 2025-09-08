@@ -82,25 +82,42 @@ export const setupTestDatabase = async () => {
     // Get the test database
     const db = client.db(TEST_DB_NAME);
     
-    // Drop the test database to ensure a clean state
-    await db.dropDatabase();
+    // Clear all collections instead of dropping database
+    const collections = ['files', 'users', 'audit', 'notifications', 'audit_logs', 'email_logs', 'notification_preferences'];
     
-    // Create collections
-    await db.createCollection('files');
-    await db.createCollection('users');
-    await db.createCollection('audit');
-    await db.createCollection('notifications');
+    for (const collectionName of collections) {
+      try {
+        await db.collection(collectionName).deleteMany({});
+      } catch (error) {
+        // Collection might not exist, create it
+        try {
+          await db.createCollection(collectionName);
+        } catch (createError) {
+          // Collection already exists, ignore
+        }
+      }
+    }
     
-    // Set up initial test data
+    // Set up initial test data with unique email per test run
     const users = db.collection('users');
-    await users.insertOne({
-      _id: new ObjectId(),
-      email: 'test@example.com',
-      password: 'hashedpassword',
-      role: 'user',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
+    const uniqueEmail = `test-${Date.now()}@example.com`;
+    
+    try {
+      await users.insertOne({
+        _id: new ObjectId(),
+        email: uniqueEmail,
+        password: 'hashedpassword',
+        role: 'user',
+        name: 'Test User',
+        department: 'test',
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+    } catch (error) {
+      console.error('Failed to create initial test user:', error);
+      // Continue without initial user - tests can create their own
+    }
     
     return client;
   } catch (error) {
@@ -138,40 +155,64 @@ export const getTestDb = (dbName = 'test-file-tracking'): Db => {
 export const cleanTestDb = async (): Promise<void> => {
   if (!client) {
     await setupTestDatabase();
+    return;
   }
   
-  const db = getTestDb();
-  const collections = await db.collections();
+  const db = client.db(TEST_DB_NAME);
   
-  await Promise.all(
-    collections.map(collection => collection.deleteMany({}))
-  );
-  
-  // Reset any test data or mocks
-  process.env = {
-    ...process.env,
-    NODE_ENV: 'test',
-    JWT_SECRET: 'test-secret-key-with-min-32-chars-123456',
-  };
+  try {
+    // Clear all collections instead of dropping database
+    const collections = ['files', 'users', 'audit', 'notifications', 'audit_logs', 'email_logs', 'notification_preferences'];
+    
+    for (const collectionName of collections) {
+      try {
+        await db.collection(collectionName).deleteMany({});
+      } catch (error) {
+        // Collection might not exist, create it
+        try {
+          await db.createCollection(collectionName);
+        } catch (createError) {
+          // Collection already exists, ignore
+        }
+      }
+    }
+    
+    // Recreate indexes
+    await db.collection('files').createIndex({ fileName: 1 });
+    await db.collection('files').createIndex({ 'metadata.tags': 1 });
+    await db.collection('users').createIndex({ email: 1 }, { unique: true });
+    await db.collection('audit').createIndex({ timestamp: -1 });
+  } catch (error) {
+    console.error('Error cleaning test database:', error);
+    throw error;
+  }
 };
 
 // Helper to create a test user
 export const createTestUser = async (userData: Partial<any> = {}) => {
   const db = getTestDb();
+  const uniqueEmail = userData.email || `test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}@example.com`;
+  
   const user = {
     _id: new ObjectId(),
-    email: 'test@example.com',
+    email: uniqueEmail,
     password: '$2a$10$XFD9z1aTZx5D5q6vQ8Qz0e8v8Q8X8vQ8Q8vQ8Q8vQ8Q8vQ8Q8',
     name: 'Test User',
     role: 'user',
     department: 'test',
+    isActive: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     ...userData,
   };
   
-  await db.collection('users').insertOne(user);
-  return user;
+  try {
+    await db.collection('users').insertOne(user);
+    return user;
+  } catch (error) {
+    console.error('Failed to create test user:', error);
+    throw error;
+  }
 };
 
 // Helper to create a test file

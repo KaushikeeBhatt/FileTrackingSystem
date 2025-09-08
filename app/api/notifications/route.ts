@@ -16,10 +16,10 @@ async function getNotificationsHandler(request: NextRequest) {
 
     const notifications = await getUserNotifications(new ObjectId(user.id), limit, skip)
 
-    return NextResponse.json({ notifications })
+    return NextResponse.json({ success: true, notifications })
   } catch (error) {
     console.error("Get notifications error:", error)
-    return NextResponse.json({ error: "Failed to fetch notifications" }, { status: 500 })
+    return NextResponse.json({ success: false, error: "Failed to fetch notifications" }, { status: 500 })
   }
 }
 

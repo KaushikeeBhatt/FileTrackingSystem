@@ -46,6 +46,9 @@ export function validatePort(port?: string): void {
     if (isNaN(portNum)) {
         throw new Error('PORT must be a valid number');
     }
+    if (portNum < 1 || portNum > 65535) {
+        throw new Error('PORT must be between 1 and 65535');
+    }
 }
 
 export function validateEnvironment(): { isValid: boolean; config: EnvConfig | null; errors: string[] } {

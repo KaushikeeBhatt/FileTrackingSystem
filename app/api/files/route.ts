@@ -82,10 +82,10 @@ async function filesHandler(request: NextRequest) {
         .toArray()
     }
 
-    return NextResponse.json({ files })
+    return NextResponse.json({ success: true, files })
   } catch (error) {
     console.error("Files fetch error:", error)
-    return NextResponse.json({ error: "Failed to fetch files" }, { status: 500 })
+    return NextResponse.json({ success: false, error: "Failed to fetch files" }, { status: 500 })
   }
 }
 

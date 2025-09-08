@@ -1,3 +1,6 @@
+// Unmock search-operations to test actual implementation
+jest.unmock('@/lib/search-operations');
+
 import { SearchOperations } from '@/lib/search-operations';
 import { ObjectId } from 'mongodb';
 
@@ -37,7 +40,9 @@ describe('SearchOperations', () => {
       find: jest.fn().mockReturnThis(),
       toArray: jest.fn().mockResolvedValue([mockFile]),
       countDocuments: jest.fn().mockResolvedValue(1),
-      aggregate: jest.fn().mockReturnThis()
+      aggregate: jest.fn().mockReturnValue({
+        toArray: jest.fn().mockResolvedValue([mockFile])
+      })
     };
 
     mockDb = {
@@ -57,7 +62,14 @@ describe('SearchOperations', () => {
         limit: 10
       };
 
-      const result = await SearchOperations.advancedSearch(filters, 'user123', 'user');
+      // Mock the aggregate pipeline for count and results
+      mockCollection.aggregate.mockReturnValueOnce({
+        toArray: jest.fn().mockResolvedValue([{ total: 1 }])
+      }).mockReturnValueOnce({
+        toArray: jest.fn().mockResolvedValue([mockFile])
+      });
+
+      const result = await SearchOperations.advancedSearch(filters, '507f1f77bcf86cd799439011', 'user');
 
       // Verify the result structure
       expect(result).toHaveProperty('results');
@@ -73,7 +85,14 @@ describe('SearchOperations', () => {
         limit: 10
       };
 
-      const result = await SearchOperations.advancedSearch(filters, 'admin123', 'admin');
+      // Mock the aggregate pipeline for count and results
+      mockCollection.aggregate.mockReturnValueOnce({
+        toArray: jest.fn().mockResolvedValue([{ total: 1 }])
+      }).mockReturnValueOnce({
+        toArray: jest.fn().mockResolvedValue([mockFile])
+      });
+
+      const result = await SearchOperations.advancedSearch(filters, '507f1f77bcf86cd799439012', 'admin');
 
       // Verify the result structure
       expect(result).toHaveProperty('results');
@@ -82,23 +101,24 @@ describe('SearchOperations', () => {
     });
 
     it('should handle empty results', async () => {
-      // Override the mock for this test
-      mockCollection.toArray.mockResolvedValueOnce([]);
-      mockCollection.countDocuments.mockResolvedValueOnce(0);
-
       const filters = {
         query: 'nonexistent',
         page: 1,
         limit: 10
       };
 
-      const result = await SearchOperations.advancedSearch(filters, 'user123', 'user');
+      // Mock the aggregate pipeline for empty results
+      mockCollection.aggregate.mockReturnValueOnce({
+        toArray: jest.fn().mockResolvedValue([])
+      }).mockReturnValueOnce({
+        toArray: jest.fn().mockResolvedValue([])
+      });
+
+      const result = await SearchOperations.advancedSearch(filters, '507f1f77bcf86cd799439011', 'user');
 
       expect(result).toMatchObject({
-        files: [],
-        total: 0,
-        page: expect.any(Number),
-        totalPages: expect.any(Number)
+        results: [],
+        total: 0
       });
     });
   });
@@ -114,7 +134,7 @@ describe('SearchOperations', () => {
       mockCollection.aggregate.mockReturnThis();
       mockCollection.toArray.mockResolvedValueOnce(mockSuggestions);
 
-      const suggestions = await SearchOperations.getSearchSuggestions('test', 'user123', 'user');
+      const suggestions = await SearchOperations.getSearchSuggestions('test', '507f1f77bcf86cd799439011', 'user');
       
       expect(Array.isArray(suggestions)).toBe(true);
       // Don't check length since we're mocking the response

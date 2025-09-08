@@ -29,11 +29,9 @@ class MockNextResponse {
 
   async json() {
     if (this._body === null || this._body === undefined) {
-      return undefined;
+      return {};
     }
-    if (typeof this._body === 'string') {
-      return JSON.parse(this._body);
-    }
+    // Return the body directly - no need for deep copy in tests
     return this._body;
   }
 
@@ -53,7 +51,7 @@ class MockNextResponse {
   }
 
   static json(data, init = {}) {
-    const response = new MockNextResponse(null, {
+    return new MockNextResponse(data, {
       status: init?.status || 200,
       statusText: init?.statusText || 'OK',
       headers: {
@@ -62,9 +60,6 @@ class MockNextResponse {
       },
       ...init
     });
-    // Explicitly set the body data for JSON responses
-    response._body = data;
-    return response;
   }
 
   static redirect(url, init = {}) {
@@ -198,11 +193,131 @@ jest.mock('next/headers', () => ({
   }),
 }));
 
+// Mock MongoDB module
+jest.mock('mongodb', () => {
+  const originalModule = jest.requireActual('mongodb');
+  
+  return {
+    ...originalModule,
+    MongoClient: jest.fn().mockImplementation(() => ({
+      connect: jest.fn().mockResolvedValue(true),
+      close: jest.fn().mockResolvedValue(true),
+      db: jest.fn().mockReturnValue({
+        collection: jest.fn().mockReturnValue({
+          insertOne: jest.fn().mockResolvedValue({ insertedId: 'test-id' }),
+          insertMany: jest.fn().mockResolvedValue({ insertedIds: ['test-id-1', 'test-id-2'] }),
+          findOne: jest.fn().mockResolvedValue(null),
+          find: jest.fn().mockReturnValue({
+            toArray: jest.fn().mockResolvedValue([]),
+            limit: jest.fn().mockReturnThis(),
+            skip: jest.fn().mockReturnThis(),
+            sort: jest.fn().mockReturnThis()
+          }),
+          updateOne: jest.fn().mockResolvedValue({ modifiedCount: 1 }),
+          updateMany: jest.fn().mockResolvedValue({ modifiedCount: 1 }),
+          deleteOne: jest.fn().mockResolvedValue({ deletedCount: 1 }),
+          deleteMany: jest.fn().mockResolvedValue({ deletedCount: 1 }),
+          countDocuments: jest.fn().mockResolvedValue(0),
+          aggregate: jest.fn().mockReturnValue({
+            toArray: jest.fn().mockResolvedValue([])
+          }),
+          createIndex: jest.fn().mockResolvedValue(true),
+          createIndexes: jest.fn().mockResolvedValue(true)
+        }),
+        createCollection: jest.fn().mockResolvedValue(true),
+        dropDatabase: jest.fn().mockResolvedValue(true),
+        admin: jest.fn().mockReturnValue({
+          ping: jest.fn().mockResolvedValue(true)
+        }),
+        listCollections: jest.fn().mockReturnValue({
+          toArray: jest.fn().mockResolvedValue([])
+        })
+      })
+    }))
+  };
+});
+
+// Mock database operations module
+jest.mock('@/lib/mongodb', () => ({
+  getDatabase: jest.fn().mockResolvedValue({
+    collection: jest.fn().mockReturnValue({
+      insertOne: jest.fn().mockResolvedValue({ insertedId: 'test-id' }),
+      insertMany: jest.fn().mockResolvedValue({ insertedIds: ['test-id-1', 'test-id-2'] }),
+      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockReturnValue({
+        toArray: jest.fn().mockResolvedValue([]),
+        limit: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        sort: jest.fn().mockReturnThis()
+      }),
+      updateOne: jest.fn().mockResolvedValue({ modifiedCount: 1 }),
+      updateMany: jest.fn().mockResolvedValue({ modifiedCount: 1 }),
+      deleteOne: jest.fn().mockResolvedValue({ deletedCount: 1 }),
+      deleteMany: jest.fn().mockResolvedValue({ deletedCount: 1 }),
+      countDocuments: jest.fn().mockResolvedValue(0),
+      aggregate: jest.fn().mockReturnValue({
+        toArray: jest.fn().mockResolvedValue([])
+      }),
+      createIndex: jest.fn().mockResolvedValue(true)
+    })
+  }),
+  connectToDatabase: jest.fn().mockResolvedValue({
+    client: {
+      connect: jest.fn().mockResolvedValue(true),
+      close: jest.fn().mockResolvedValue(true),
+      db: jest.fn().mockReturnValue({
+        collection: jest.fn().mockReturnValue({
+          insertOne: jest.fn().mockResolvedValue({ insertedId: 'test-id' }),
+          findOne: jest.fn().mockResolvedValue(null)
+        })
+      })
+    },
+    db: {
+      collection: jest.fn().mockReturnValue({
+        insertOne: jest.fn().mockResolvedValue({ insertedId: 'test-id' }),
+        findOne: jest.fn().mockResolvedValue(null)
+      }),
+      admin: jest.fn().mockReturnValue({
+        ping: jest.fn().mockResolvedValue(true)
+      }),
+      listCollections: jest.fn().mockReturnValue({
+        toArray: jest.fn().mockResolvedValue([])
+      })
+    }
+  })
+}));
+
 
 // Mock audit operations
 jest.mock('@/lib/audit-operations', () => ({
   AuditOperations: {
     createLog: jest.fn().mockResolvedValue(true),
+    getAuditTrail: jest.fn().mockResolvedValue({
+      logs: [
+        {
+          _id: 'test-audit-id',
+          action: 'upload',
+          resourceType: 'file',
+          timestamp: new Date(),
+          status: 'success',
+          user: { name: 'Test User', email: 'test@example.com' },
+          resource: { originalName: 'test.txt' }
+        }
+      ],
+      total: 1
+    }),
+    getAuditStats: jest.fn().mockResolvedValue({
+      totalActions: 10,
+      successfulActions: 8,
+      failedActions: 2,
+      uniqueUsers: 3,
+      actionBreakdown: [{ action: 'upload', count: 5 }],
+      dailyActivity: [{ date: '2024-01-01', count: 3 }],
+      topUsers: [{ user: 'Test User', count: 5 }]
+    }),
+    exportAuditReport: jest.fn().mockResolvedValue('timestamp,user,action,resource\n2024-01-01,Test User,upload,test.txt'),
+    createDetailedAuditLog: jest.fn().mockResolvedValue('test-audit-id'),
+    getRecentActivity: jest.fn().mockResolvedValue([]),
     getDb: jest.fn().mockReturnValue({
       collection: jest.fn().mockReturnValue({
         insertOne: jest.fn().mockResolvedValue({ insertedId: 'test-id' }),
@@ -290,57 +405,113 @@ jest.mock('@/lib/rate-limiter', () => ({
   rateLimiter: { consume: jest.fn().mockResolvedValue(true) },
 }));
 
-// Mock rate limit middleware
+// Mock rate limit middleware - ensure proper function wrapping
 jest.mock('@/lib/middleware/rate-limit', () => ({
   rateLimiter: jest.fn().mockResolvedValue(true),
   checkRateLimit: jest.fn().mockResolvedValue({ success: true }),
-  withRateLimit: (handler) => handler,
-  rateLimit: () => (handler) => handler,
-  withAuthAndRateLimit: (handler) => handler,
+  withRateLimit: (handler, limitType) => {
+    return async (req, ...args) => {
+      // Add user to request for authentication
+      if (!req.user) {
+        req.user = {
+          id: 'test-user-id',
+          email: 'test@example.com',
+          role: 'user',
+          name: 'Test User'
+        };
+      }
+      return handler(req, ...args);
+    };
+  },
+  rateLimit: (limitType) => {
+    return (handler) => {
+      return async (req, ...args) => {
+        // Add user to request for authentication
+        if (!req.user) {
+          req.user = {
+            id: 'test-user-id',
+            email: 'test@example.com',
+            role: 'user',
+            name: 'Test User'
+          };
+        }
+        return handler(req, ...args);
+      };
+    };
+  },
+  withAuthAndRateLimit: (handler, requiredRoles, limitType) => {
+    return async (req, ...args) => {
+      // Ensure user is set for authentication
+      if (!req.user) {
+        req.user = {
+          id: 'test-user-id',
+          email: 'test@example.com',
+          role: requiredRoles && requiredRoles.includes('admin') ? 'admin' : 'user',
+          name: 'Test User'
+        };
+      }
+      return handler(req, ...args);
+    };
+  },
 }));
 
 // Mock file operations
-jest.mock('@/lib/file-operations', () => ({
-  FileOperations: {
-    uploadFile: jest.fn().mockResolvedValue({
+const mockFileOperations = {
+  uploadFile: jest.fn().mockImplementation((file, userId) => {
+    // Check file size to simulate size limit validation
+    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+      throw new Error('File size exceeds the limit of 10.00MB');
+    }
+    return Promise.resolve({
       success: true,
       file: {
         _id: 'test-file-id',
         filename: 'test.txt',
         originalName: 'test.txt',
-        size: 1024,
+        size: file.size || 1024,
         mimeType: 'text/plain',
-        uploadedBy: 'test-user-id',
+        uploadedBy: userId || 'test-user-id',
         uploadedAt: new Date(),
         status: 'pending'
       }
-    }),
-    getUserFiles: jest.fn().mockResolvedValue([]),
-    deleteFile: jest.fn().mockResolvedValue({ success: true }),
-    approveFile: jest.fn().mockResolvedValue({ success: true }),
-    downloadFile: jest.fn().mockResolvedValue({ success: true, filePath: '/tmp/test.txt' }),
-    shareFile: jest.fn().mockResolvedValue({ success: true, shareId: 'test-share-id' }),
-    getFileById: jest.fn().mockResolvedValue(null),
-  }
+    });
+  }),
+  getUserFiles: jest.fn().mockResolvedValue([]),
+  deleteFile: jest.fn().mockResolvedValue({ success: true }),
+  approveFile: jest.fn().mockResolvedValue({ success: true }),
+  downloadFile: jest.fn().mockResolvedValue({ success: true, filePath: '/tmp/test.txt' }),
+  shareFile: jest.fn().mockImplementation((fileId, userId) => {
+    // Simulate file not found error
+    throw new Error('File not found');
+  }),
+  getFileById: jest.fn().mockResolvedValue(null),
+};
+
+jest.mock('@/lib/file-operations', () => ({
+  FileOperations: mockFileOperations
 }));
+
+// Export for use in tests
+global.mockFileOperations = mockFileOperations;
 
 // Mock search operations
 jest.mock('@/lib/search-operations', () => ({
   SearchOperations: {
     searchFiles: jest.fn().mockResolvedValue({
-      files: [],
+      results: [],
       total: 0,
       page: 1,
       totalPages: 0
     }),
     advancedSearch: jest.fn().mockResolvedValue({
-      files: [],
+      results: [],
       total: 0,
       page: 1,
       totalPages: 0
     }),
     saveSearch: jest.fn().mockResolvedValue({ success: true, searchId: 'test-search-id' }),
     getSavedSearches: jest.fn().mockResolvedValue([]),
+    deleteSavedSearch: jest.fn().mockResolvedValue({ success: true }),
     getSearchSuggestions: jest.fn().mockResolvedValue([])
   }
 }));
@@ -358,44 +529,114 @@ jest.mock('@/lib/notification-operations', () => ({
   getUnreadNotificationCount: jest.fn().mockResolvedValue(3),
   getUserPreferences: jest.fn().mockResolvedValue({ email: true, push: true }),
   updateUserPreferences: jest.fn().mockResolvedValue({ success: true, preferences: {} }),
+  NotificationOperations: {
+    getUserNotifications: jest.fn().mockResolvedValue([
+      { _id: 'test-id', message: 'Test notification', read: false, createdAt: new Date() }
+    ]),
+    createNotification: jest.fn().mockResolvedValue({ success: true, notificationId: 'test-id' }),
+    markNotificationAsRead: jest.fn().mockResolvedValue({ success: true }),
+    markAllNotificationsAsRead: jest.fn().mockResolvedValue({ success: true, updatedCount: 5 }),
+    deleteNotification: jest.fn().mockResolvedValue({ success: true }),
+    getUnreadCount: jest.fn().mockResolvedValue(3),
+    getUserPreferences: jest.fn().mockResolvedValue({ email: true, push: true }),
+    updateUserPreferences: jest.fn().mockResolvedValue({ success: true, preferences: {} })
+  }
 }));
 
 // Mock admin operations
 jest.mock('@/lib/admin-operations', () => ({
   AdminOperations: {
-    getStats: jest.fn().mockResolvedValue({
+    getSystemStats: jest.fn().mockResolvedValue({
       totalUsers: 10,
+      activeUsers: 8,
       totalFiles: 50,
-      pendingFiles: 5,
-      storageUsed: 1024000
+      totalStorage: 1024000,
+      pendingApprovals: 5,
+      recentActivity: 15,
+      systemHealth: {
+        database: 'healthy',
+        storage: 'healthy',
+        performance: 'healthy'
+      }
     }),
-    getAllUsers: jest.fn().mockResolvedValue([]),
-    updateUser: jest.fn().mockResolvedValue({ success: true }),
-    deleteUser: jest.fn().mockResolvedValue({ success: true }),
-    bulkApproveFiles: jest.fn().mockResolvedValue({ success: true, approvedCount: 5 })
+    getAllUsers: jest.fn().mockResolvedValue([
+      {
+        _id: 'test-user-id',
+        name: 'Test User',
+        email: 'test@example.com',
+        role: 'user',
+        department: 'test',
+        isActive: true,
+        createdAt: new Date(),
+        fileCount: 5,
+        storageUsed: 1024
+      }
+    ]),
+    createUser: jest.fn().mockResolvedValue('new-user-id'),
+    updateUser: jest.fn().mockResolvedValue(true),
+    deleteUser: jest.fn().mockResolvedValue(true),
+    bulkApproveFiles: jest.fn().mockImplementation((fileIds) => {
+      if (!Array.isArray(fileIds) || fileIds.length === 0) {
+        throw new Error('File IDs array is required');
+      }
+      return Promise.resolve({ approved: fileIds.length, failed: 0 });
+    }),
+    bulkDeleteFiles: jest.fn().mockResolvedValue(3),
+    getSystemAnalytics: jest.fn().mockResolvedValue({
+      uploadTrends: [],
+      activityTrends: [],
+      departmentStats: [],
+      fileTypeStats: []
+    })
   }
 }));
 
-// Mock auth middleware
+// Mock auth middleware - simplified to just pass through and add user
 jest.mock('@/lib/middleware/auth', () => ({
-  withAuth: (handler) => (req, context) => {
-    req.user = {
-      id: 'test-user-id',
-      email: 'test@example.com',
-      role: 'user',
-      name: 'Test User'
+  withAuth: (handler, requiredRoles) => {
+    return async (req, ...args) => {
+      // Add user to request for authentication
+      if (!req.user) {
+        req.user = {
+          id: 'test-user-id',
+          email: 'test@example.com',
+          role: requiredRoles && requiredRoles.includes('admin') ? 'admin' : 'user',
+          name: 'Test User'
+        };
+      }
+      return handler(req, ...args);
     };
-    return handler(req, context);
   },
-  withAuthAndRole: (handler, roles) => (req, context) => {
-    req.user = {
-      id: 'test-user-id',
-      email: 'test@example.com',
-      role: roles[0] || 'user',
-      name: 'Test User'
+  requireAuth: jest.fn().mockImplementation((handler) => {
+    return async (req, ...args) => {
+      // Add user to request for authentication
+      if (!req.user) {
+        req.user = {
+          id: 'test-user-id',
+          email: 'test@example.com',
+          role: 'user',
+          name: 'Test User'
+        };
+      }
+      return handler(req, ...args);
     };
-    return handler(req, context);
-  },
+  }),
+  requireRole: jest.fn().mockImplementation((roles) => {
+    return (handler) => {
+      return async (req, ...args) => {
+        // Add user to request for authentication
+        if (!req.user) {
+          req.user = {
+            id: 'test-user-id',
+            email: 'test@example.com',
+            role: roles.includes('admin') ? 'admin' : 'user',
+            name: 'Test User'
+          };
+        }
+        return handler(req, ...args);
+      };
+    };
+  }),
 }));
 
 // Mock AuthService

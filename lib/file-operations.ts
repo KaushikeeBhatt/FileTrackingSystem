@@ -96,7 +96,7 @@ export class FileOperations {
       userId: new ObjectId(user.id),
       action: "upload",
       resourceType: "file",
-      resourceId: new ObjectId(fileId),
+      resourceId: fileId,
       details: { fileName: originalName, size: buffer.length },
       status: "success"
     })

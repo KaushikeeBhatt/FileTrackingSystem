@@ -172,7 +172,7 @@ describe('Environment Validation', () => {
       process.env.JWT_SECRET = 'a-very-long-and-secure-jwt-secret-key-for-testing';
       process.env.MONGODB_URI = 'mongodb://localhost:27017/testdb';
       process.env.PORT = '3000';
-      jest.spyOn(process, 'env', 'get').mockReturnValue({ ...process.env, NODE_ENV: 'development' });
+      (process.env as any).NODE_ENV = 'development';
       
       expect(() => validateEnvironment()).not.toThrow();
     });
@@ -185,7 +185,7 @@ describe('Environment Validation', () => {
     });
 
     it('should validate in production environment', () => {
-      jest.spyOn(process, 'env', 'get').mockReturnValue({ ...process.env, NODE_ENV: 'production' });
+      (process.env as any).NODE_ENV = 'production';
       process.env.JWT_SECRET = 'a-very-long-and-secure-jwt-secret-key-for-production';
       process.env.MONGODB_URI = 'mongodb+srv://user:pass@cluster.mongodb.net/prod';
       process.env.PORT = '8080';
@@ -194,7 +194,7 @@ describe('Environment Validation', () => {
     });
 
     it('should validate in test environment', () => {
-      jest.spyOn(process, 'env', 'get').mockReturnValue({ ...process.env, NODE_ENV: 'test' });
+      (process.env as any).NODE_ENV = 'test';
       process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-purposes';
       process.env.MONGODB_URI = 'mongodb://localhost:27017/testdb';
       

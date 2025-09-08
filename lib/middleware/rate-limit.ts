@@ -67,8 +67,10 @@ export function withAuthAndRateLimit(
 ) {
   return withRateLimit(
     async (request: NextRequest, ...args: any[]) => {
-      // Auth check would go here if needed
-      return handler(request, ...args)
+      // Import auth middleware here to avoid circular dependencies
+      const { withAuth } = await import('./auth');
+      const authHandler = withAuth(handler, requiredRoles);
+      return authHandler(request, ...args);
     },
     limitType,
     true,
