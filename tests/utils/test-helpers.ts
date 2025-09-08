@@ -1,5 +1,4 @@
 import { MongoClient, Db, ObjectId, Collection } from 'mongodb';
-import { jest } from '@jest/globals';
 
 // Local MongoDB connection
 const MONGODB_URI = 'mongodb://localhost:27017/test-file-tracking';
