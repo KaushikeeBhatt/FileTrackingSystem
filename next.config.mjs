@@ -17,13 +17,13 @@ const nextConfig = {
     unoptimized: true,
   },
 
-  // Enable standalone output for Docker
-  output: "standalone",
-
-  // Optimize for containerized environments
-  experimental: {
-    outputFileTracingRoot: path.join(__dirname, "../../"),
-  },
+  // Enable standalone output for Docker only in production
+  ...(process.env.NODE_ENV === "production" && process.env.DOCKER_BUILD === "true" && {
+    output: "standalone",
+    experimental: {
+      outputFileTracingRoot: path.join(__dirname, "../../"),
+    },
+  }),
 };
 
 export default nextConfig;

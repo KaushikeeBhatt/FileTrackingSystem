@@ -40,7 +40,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run start",
+    command: process.env.NODE_ENV === "production" && process.env.DOCKER_BUILD === "true" 
+      ? "node .next/standalone/server.js" 
+      : "npm run start",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,

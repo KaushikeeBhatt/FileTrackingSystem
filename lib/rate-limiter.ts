@@ -53,18 +53,30 @@ export function defaultKeyGenerator(request: NextRequest): string {
   }
 
   // Fallback to IP address for unauthenticated requests
-  const forwarded = request.headers.get("x-forwarded-for");
-  const ip = forwarded ? forwarded.split(",")[0] : request.headers.get("x-real-ip") || "unknown";
-  return `ip:${ip}`;
+  // Use try-catch to handle static generation context
+  try {
+    const forwarded = request.headers.get("x-forwarded-for");
+    const ip = forwarded ? forwarded.split(",")[0] : request.headers.get("x-real-ip") || "unknown";
+    return `ip:${ip}`;
+  } catch (error) {
+    // During static generation, headers may not be available
+    return `ip:static-generation`;
+  }
 }
 
 // Role-based key generator for different limits based on user role
 export function roleBasedKeyGenerator(request: NextRequest): string {
   const user = (request as any).user;
   
-  // Get IP address directly
-  const forwarded = request.headers.get("x-forwarded-for");
-  const ip = forwarded ? forwarded.split(",")[0] : request.headers.get("x-real-ip") || "unknown";
+  // Get IP address with error handling for static generation
+  let ip = "unknown";
+  try {
+    const forwarded = request.headers.get("x-forwarded-for");
+    ip = forwarded ? forwarded.split(",")[0] : request.headers.get("x-real-ip") || "unknown";
+  } catch (error) {
+    // During static generation, headers may not be available
+    ip = "static-generation";
+  }
   
   if (user) {
     return `${user.role || 'user'}:${user.id}:ip:${ip}`;
