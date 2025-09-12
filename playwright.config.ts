@@ -44,5 +44,11 @@ export default defineConfig({
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
+    env: {
+      MONGODB_URI: process.env.MONGODB_URI || "mongodb://localhost:27017/file-tracking-e2e",
+      JWT_SECRET: process.env.JWT_SECRET || "e2e-test-jwt-secret",
+      PORT: process.env.PORT || "3000",
+      NODE_ENV: "production"
+    }
   },
 })

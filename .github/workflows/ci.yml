@@ -77,20 +77,13 @@ jobs:
     - name: Install Playwright browsers
       run: npx playwright install --with-deps
 
-    - name: Start application for E2E tests
-      run: npm run start &
-      env:
-        MONGODB_URI: mongodb://localhost:27017/file-tracking-e2e
-        JWT_SECRET: e2e-test-jwt-secret
-        PORT: 3000
-
-    - name: Wait for application to be ready
-      run: npx wait-on http://localhost:3000 --timeout 60000
-
     - name: Run Playwright E2E tests
       run: npm run test:e2e
       env:
         BASE_URL: http://localhost:3000
+        MONGODB_URI: mongodb://localhost:27017/file-tracking-e2e
+        JWT_SECRET: e2e-test-jwt-secret
+        PORT: 3000
 
     - name: Upload Playwright report
       uses: actions/upload-artifact@v4
