@@ -10,17 +10,7 @@ import {
 import { setupTestDatabase, cleanTestDb } from '../../utils/test-helpers';
 import { NextRequest } from 'next/server';
 
-// Mock Redis client
-jest.mock('redis', () => ({
-  createClient: jest.fn(() => ({
-    get: jest.fn().mockResolvedValue(null),
-    set: jest.fn().mockResolvedValue('OK'),
-    incr: jest.fn().mockResolvedValue(1),
-    expire: jest.fn().mockResolvedValue(1),
-    ttl: jest.fn().mockResolvedValue(300),
-    connect: jest.fn().mockResolvedValue(undefined),
-  }))
-}));
+// No Redis mocking needed since we're using in-memory storage
 
 // Helper to create a mock NextRequest
 const createMockRequest = (headers: Record<string, string>, connection?: any, user?: any): NextRequest => {

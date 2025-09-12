@@ -130,8 +130,8 @@ describe('FileOperations', () => {
       expect(fs.writeFile).toHaveBeenCalled();
       expect(mockCollection.insertOne).toHaveBeenCalledWith(expect.objectContaining({
         originalName: 'test.txt',
-        mimeType: 'text/plain',
-        userId: user._id
+        fileType: 'text/plain',
+        uploadedBy: expect.any(ObjectId)
       }));
     });
 
@@ -197,10 +197,11 @@ describe('FileOperations', () => {
       const mockFile = {
         _id: fileId,
         originalName: 'delete_me.txt',
-        mimeType: 'text/plain',
-        size: 100,
-        path: '/tmp/uploads/delete_me.txt',
-        userId: user._id,
+        fileName: 'delete_me.txt',
+        fileType: 'text/plain',
+        fileSize: 100,
+        filePath: 'uploads/delete_me.txt',
+        uploadedBy: user._id,
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -212,7 +213,7 @@ describe('FileOperations', () => {
       const result = await FileOperations.deleteFile(fileId.toHexString(), user._id.toHexString());
 
       expect(result).toBe(true);
-      expect(fs.unlink).toHaveBeenCalledWith(mockFile.path);
+      expect(fs.unlink).toHaveBeenCalledWith(expect.stringContaining('delete_me.txt'));
       expect(mockCollection.deleteOne).toHaveBeenCalledWith({ _id: fileId });
     });
 
@@ -235,7 +236,7 @@ describe('FileOperations', () => {
         mimeType: 'text/plain',
         size: 100,
         path: '/tmp/uploads/not_owned.txt',
-        userId: otherUserId, // Different user ID
+        uploadedBy: otherUserId, // Different user ID
         createdAt: new Date(),
         updatedAt: new Date()
       };

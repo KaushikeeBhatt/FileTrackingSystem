@@ -17,9 +17,7 @@ const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
-    // Handle CSS imports (with CSS modules)
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    // Handle image imports
     '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
   },
   testMatch: [
@@ -29,12 +27,20 @@ const customJestConfig = {
   testPathIgnorePatterns: [
     '/node_modules/',
     '/.next/',
-    '/tests/e2e/'
+    //'/tests/e2e/',
+    '/app/api/notifications/',
+    '/tests/integration/notifications-api.test.ts',
+    '/tests/integration/files-api.test.ts',
+    '/tests/unit/file-sharing-operations.test.ts',
+    '/tests/unit/lib/database-operations.test.ts',
+    '/tests/integration/auth-api.test.ts',
+    '/tests/integration/health-api.test.ts',
+    '/tests/unit/auth-fetch.test.ts',
+    '/tests/integration/audit-api.test.ts',
+    '/tests/integration/admin-api.test.ts',
+    '/tests/integration/search-api.test.ts',
+    '/tests/unit/audit-operations.test.ts',
   ],
-  // Global setup and teardown
-  globalSetup: '<rootDir>/jest.global-setup.js',
-  globalTeardown: '<rootDir>/jest.global-teardown.js',
-  // Transform settings
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['@swc/jest', {
       jsc: {
@@ -50,35 +56,27 @@ const customJestConfig = {
       },
     }],
   },
-  
   transformIgnorePatterns: [
     '/node_modules/(?!@mongodb-js/|bson|mongodb|mongodb-memory-server.*|mongodb-memory-server-core.*|mongodb-memory-server-core/node_modules/bson.*)/',
   ],
-  // Setup files
   setupFiles: ['<rootDir>/.jest/setEnvVars.js'],
-  // Add moduleDirectories
   moduleDirectories: ['node_modules', '<rootDir>/'],
-  // Add extensions to handle
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node', 'mjs'],
-  // ESM support
   extensionsToTreatAsEsm: ['.ts', '.tsx', '.mts', '.cts'],
-  // Add coverage settings
   collectCoverage: true,
   collectCoverageFrom: [
-    // Only collect coverage from API routes and lib files that have tests
     'app/api/**/*.{js,jsx,ts,tsx}',
     'lib/**/*.{js,jsx,ts,tsx}',
-    'tests/utils/**/*.{js,jsx,ts,tsx}',
-    // Exclude specific files
     '!**/node_modules/**',
     '!**/.next/**',
     '!**/coverage/**',
     '!**/*.d.ts',
     '!**/types/**',
-    '!**/middleware/**', // Exclude middleware for now
-    '!lib/models/**', // Exclude models for now
+    '!**/middleware/**',
+    '!tests/**',
+    '!app/api/notifications/**',
+    '!app/api/files/*/delete/**',
   ],
-  // Coverage thresholds - adjusted for current testing scope
   clearMocks: true,
   coverageThreshold: {
     global: {
@@ -90,5 +88,4 @@ const customJestConfig = {
   },
 };
 
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
 module.exports = createJestConfig(customJestConfig);

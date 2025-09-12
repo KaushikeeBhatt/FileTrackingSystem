@@ -11,27 +11,30 @@ export async function GET() {
     const requiredEnvVars = ["MONGODB_URI", "JWT_SECRET"]
     const missingVars = requiredEnvVars.filter((key) => !process.env[key])
 
-    const health = {
-      status: "healthy",
-      timestamp: new Date().toISOString(),
-      version: process.env.npm_package_version || "1.0.0",
-      environment: process.env.NODE_ENV || "development",
-      database: "connected",
-      uptime: process.uptime(),
-      memory: process.memoryUsage(),
-      ...(missingVars.length > 0 && {
-        warnings: [`Missing environment variables: ${missingVars.join(", ")}`],
-      }),
-    }
-
-    return NextResponse.json(health, { status: 200 })
+    return NextResponse.json(
+      {
+        database: "connected",
+        uptime: process.uptime(),
+        version: process.env.npm_package_version || "1.0.0",
+        status: "healthy",
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || "development",
+        memory: process.memoryUsage(),
+        ...(missingVars.length > 0 && {
+          warnings: [`Missing environment variables: ${missingVars.join(", ")}`],
+        }),
+      },
+      { status: 200 },
+    )
   } catch (error) {
     return NextResponse.json(
       {
+        database: "disconnected",
+        uptime: process.uptime(),
+        version: process.env.npm_package_version || "1.0.0",
         status: "unhealthy",
         timestamp: new Date().toISOString(),
         error: error instanceof Error ? error.message : "Unknown error",
-        database: "disconnected",
       },
       { status: 503 },
     )

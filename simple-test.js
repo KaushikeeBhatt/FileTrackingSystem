@@ -15,3 +15,25 @@ response.json().then(data => {
 }).catch(err => {
   console.error('JSON parse error:', err);
 });
+
+// Debug test for file upload
+console.log('Testing file upload functionality...');
+
+// Test the mocked FileOperations
+const mockFileOperations = {
+  uploadFile: jest.fn().mockResolvedValue('test-file-id')
+};
+
+console.log('Mock file operations:', mockFileOperations);
+
+// Test basic mock functionality
+async function testMock() {
+  try {
+    const result = await mockFileOperations.uploadFile({}, {}, {});
+    console.log('Mock result:', result);
+  } catch (error) {
+    console.error('Mock error:', error);
+  }
+}
+
+testMock();

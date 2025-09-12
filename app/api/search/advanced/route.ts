@@ -8,8 +8,11 @@ async function advancedSearchHandler(request: NextRequest) {
     const filters = await request.json()
 
     // Validate required fields
-    if (!filters || typeof filters !== 'object') {
-      return NextResponse.json({ success: false, error: "Invalid search filters" }, { status: 400 })
+    if (!filters || typeof filters !== "object") {
+      return NextResponse.json(
+        { success: false, error: "Invalid search filters" },
+        { status: 400 }
+      )
     }
 
     // Validate date range
@@ -17,15 +20,37 @@ async function advancedSearchHandler(request: NextRequest) {
       const fromDate = new Date(filters.dateFrom)
       const toDate = new Date(filters.dateTo)
       if (fromDate > toDate) {
-        return NextResponse.json({ success: false, error: "Invalid date range: from date must be before to date" }, { status: 400 })
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Invalid date range: from date must be before to date",
+          },
+          { status: 400 }
+        )
       }
     }
 
+    // Handle pagination from query or body
     const { searchParams } = new URL(request.url)
-    const limit = Number.parseInt(searchParams.get("limit") || "50")
-    const skip = Number.parseInt(searchParams.get("skip") || "0")
+    const bodyPage = Number.parseInt(filters.page?.toString() || "1")
+    const bodyLimit = Number.parseInt(filters.limit?.toString() || "50")
 
-    const searchResults = await SearchOperations.advancedSearch(filters, user.id, user.role, limit, skip)
+    const limit = Number.parseInt(
+      searchParams.get("limit") || bodyLimit.toString() || "50"
+    )
+    const skip = Number.parseInt(
+      searchParams.get("skip") ||
+        ((bodyPage - 1) * limit).toString() ||
+        "0"
+    )
+
+    const searchResults = await SearchOperations.advancedSearch(
+      filters,
+      user.id,
+      user.role,
+      limit,
+      skip
+    )
 
     // Format response to match test expectations
     const response = {
@@ -35,20 +60,23 @@ async function advancedSearchHandler(request: NextRequest) {
         page: Math.floor(skip / limit) + 1,
         limit,
         total: searchResults.total,
-        totalPages: Math.ceil(searchResults.total / limit)
+        totalPages: Math.ceil(searchResults.total / limit),
       },
       facets: {
         categories: [],
         departments: [],
         fileTypes: [],
-        tags: []
-      }
+        tags: [],
+      },
     }
 
     return NextResponse.json(response)
   } catch (error) {
     console.error("Advanced search error:", error)
-    return NextResponse.json({ success: false, error: "Search failed" }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: "Search failed" },
+      { status: 500 }
+    )
   }
 }
 

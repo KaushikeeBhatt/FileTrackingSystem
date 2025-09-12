@@ -1,8 +1,10 @@
 import { NextRequest } from "next/server";
+
+// Import API routes - middleware is mocked globally in jest.setup.js
 import { GET as auditLogsHandler } from "@/app/api/audit/logs/route";
 import { GET as auditStatsHandler } from "@/app/api/audit/stats/route";
 import { GET as auditExportHandler } from "@/app/api/audit/export/route";
-import { setupTestDatabase, getTestDb, cleanTestDb } from "../utils/test-helpers";
+import { setupTestDatabase, getTestDb, cleanTestDb, createTestUser } from "../utils/test-helpers";
 
 // Mock the rate limiter
 jest.mock('@/lib/rate-limiter', () => ({

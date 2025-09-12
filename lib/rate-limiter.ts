@@ -1,5 +1,4 @@
 import type { NextRequest } from "next/server";
-import { createClient } from 'redis';
 
 export interface RateLimitConfig {
   windowMs: number;
@@ -74,29 +73,25 @@ export function roleBasedKeyGenerator(request: NextRequest): string {
   return `ip:${ip}`;
 }
 
-// Create Redis client
-const redisClient = process.env.NODE_ENV === 'test' 
-  ? {
-      get: async () => null,
-      set: async () => 'OK',
-      incr: async () => 1,
-      expire: async () => 1,
-      ttl: async () => 300,
-    }
-  : createClient({
-      url: process.env.REDIS_URL || 'redis://localhost:6379'
-    });
-
-// Connect to Redis
-if (process.env.NODE_ENV !== 'test') {
-  (async () => {
-    try {
-      await (redisClient as any).connect();
-    } catch (error) {
-      console.error('Failed to connect to Redis:', error);
-    }
-  })();
+// In-memory rate limit store
+interface RateLimitEntry {
+  count: number;
+  resetTime: number;
 }
+
+const rateLimitStore = new Map<string, RateLimitEntry>();
+
+// Clean up expired entries periodically
+setInterval(() => {
+  const now = Date.now();
+  const keysToDelete: string[] = [];
+  rateLimitStore.forEach((entry, key) => {
+    if (entry.resetTime <= now) {
+      keysToDelete.push(key);
+    }
+  });
+  keysToDelete.forEach(key => rateLimitStore.delete(key));
+}, 60000); // Clean up every minute
 
 export async function checkRateLimit(
   request: NextRequest,
@@ -109,18 +104,17 @@ export async function checkRateLimit(
   const resetTime = now + windowMs;
   
   try {
-    // Get the current count from Redis
-    const redisKey = `rate_limit:${key}`;
-    const count = await redisClient.get(redisKey);
+    // Get or create rate limit entry
+    const rateLimitKey = `rate_limit:${key}`;
+    let entry = rateLimitStore.get(rateLimitKey);
     
-    const currentCount = count ? parseInt(count, 10) : 0;
-    
-    // If this is a new window or the key doesn't exist
-    if (!count || currentCount === 0) {
-      await Promise.all([
-        redisClient.set(redisKey, '1'),
-        redisClient.expire(redisKey, Math.ceil(windowMs / 1000)),
-      ]);
+    // If entry doesn't exist or has expired, create a new one
+    if (!entry || entry.resetTime <= now) {
+      entry = {
+        count: 1,
+        resetTime: resetTime,
+      };
+      rateLimitStore.set(rateLimitKey, entry);
       
       return {
         allowed: true,
@@ -130,15 +124,16 @@ export async function checkRateLimit(
     }
     
     // Increment the counter
-    const newCount = await redisClient.incr(redisKey);
+    entry.count++;
+    rateLimitStore.set(rateLimitKey, entry);
     
-    const allowed = newCount <= config.maxRequests;
-    const remaining = Math.max(0, config.maxRequests - newCount);
+    const allowed = entry.count <= config.maxRequests;
+    const remaining = Math.max(0, config.maxRequests - entry.count);
     
     return {
       allowed,
       remaining,
-      resetTime: now + (await redisClient.ttl(redisKey)) * 1000,
+      resetTime: entry.resetTime,
     };
   } catch (error) {
     console.error('Rate limiter error:', error);

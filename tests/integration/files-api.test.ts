@@ -1,35 +1,21 @@
 import { NextRequest } from "next/server";
-import { ObjectId } from 'mongodb';
+import { ObjectId } from "mongodb";
+
+// Import API routes - middleware is mocked globally in jest.setup.js
 import { POST as uploadHandler } from "@/app/api/files/upload/route";
 import { GET as filesHandler } from "@/app/api/files/route";
 import { DELETE as deleteHandler } from "@/app/api/files/[id]/route";
 import { POST as approveHandler } from "@/app/api/files/[id]/approve/route";
 import { GET as downloadHandler } from "@/app/api/files/[id]/download/route";
 import { POST as shareHandler } from "@/app/api/files/[id]/share/route";
-import { setupTestDatabase, getTestDb, cleanTestDb, createTestUser } from "../utils/test-helpers";
+// Removed test database imports - using mocked operations only
 import { FileOperations } from "@/lib/file-operations";
 import type { FileRecord } from "@/lib/models/file";
 import '../utils/mock-formdata';
 
 // Mock file operations
 const mockFileOperations = {
-  uploadFile: jest.fn().mockResolvedValue({
-    id: new ObjectId().toString(),
-    _id: new ObjectId(),
-    fileName: 'test_file.txt',
-    originalName: 'test.txt',
-    fileType: 'text/plain',
-    fileSize: 1024,
-    status: 'pending_approval',
-    uploadedBy: new ObjectId(),
-    department: 'test',
-    category: 'general',
-    tags: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    filePath: 'uploads/test_file.txt',
-    metadata: { version: 1, checksum: 'abc123', accessCount: 0 }
-  }),
+  uploadFile: jest.fn().mockResolvedValue(new ObjectId().toString()),
   getFilesByUser: jest.fn().mockResolvedValue([]),
   getFileById: jest.fn().mockResolvedValue({
     _id: new ObjectId(),
@@ -45,59 +31,59 @@ const mockFileOperations = {
     createdAt: new Date(),
     updatedAt: new Date(),
     filePath: 'uploads/test_file.txt',
-    metadata: { version: 1, checksum: 'abc123', accessCount: 0 }
+    metadata: { version: 1, checksum: 'abc123', accessCount: 0 },
+    ownerId: new ObjectId(),
+    isDeleted: false,
+    mimeType: 'text/plain',
+    size: 1024
   }),
   deleteFile: jest.fn().mockResolvedValue(true),
-  approveFile: jest.fn().mockImplementation((fileId, approverId) => {
-    // Validate ObjectId format
-    try {
-      new ObjectId(fileId);
-      new ObjectId(approverId);
-      return Promise.resolve(true);
-    } catch (error) {
-      return Promise.reject(new Error('Invalid ObjectId format'));
-    }
-  }),
+  approveFile: jest.fn().mockResolvedValue(true),
   downloadFile: jest.fn().mockResolvedValue(Buffer.from('test content')),
+  getFileBuffer: jest.fn().mockResolvedValue(Buffer.from('test content')),
 };
 
 jest.mock('@/lib/file-operations', () => ({
   FileOperations: mockFileOperations
 }));
 
-// Mock rate limit middleware
-jest.mock('@/lib/middleware/rate-limit', () => ({
-  withRateLimit: (handler: any) => handler,
-  rateLimit: (type: string) => (handler: any) => handler,
-  withAuthAndRateLimit: (handler: any, roles?: string[], type?: string) => {
-    return async (request: any, ...args: any[]) => {
-      // Add user to request if not present
-      if (!request.user) {
-        request.user = { id: new ObjectId().toString(), role: 'user' };
-      }
-      return handler(request, ...args);
-    };
-  },
+// Mock database operations
+jest.mock('@/lib/database-operations', () => ({
+  getFileById: jest.fn().mockResolvedValue({
+    _id: new ObjectId(),
+    fileName: 'test.txt',
+    originalName: 'test.txt',
+    fileType: 'text/plain',
+    fileSize: 1024,
+    status: 'active',
+    uploadedBy: new ObjectId(),
+    department: 'test',
+    category: 'general',
+    tags: [],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    filePath: 'uploads/test.txt',
+    metadata: { version: 1, checksum: 'abc123', accessCount: 0 },
+    ownerId: new ObjectId(),
+    isDeleted: false,
+    mimeType: 'text/plain',
+    size: 1024
+  }),
+  createAuditLog: jest.fn().mockResolvedValue(true),
+  updateFileAccess: jest.fn().mockResolvedValue(true),
 }));
 
-// Mock auth middleware
-jest.mock('@/lib/middleware/auth', () => ({
-  withAuth: (handler: any, roles?: string[]) => {
-    return async (request: any, ...args: any[]) => {
-      // Add user to request if not present
-      if (!request.user) {
-        request.user = { id: new ObjectId().toString(), role: 'user' };
-      }
-      return handler(request, ...args);
-    };
+// Mock file sharing operations
+jest.mock('@/lib/file-sharing-operations', () => ({
+  FileSharingOperations: {
+    shareFile: jest.fn().mockResolvedValue({ insertedId: new ObjectId().toString() }),
+    getFilePermissions: jest.fn().mockResolvedValue(['read']),
   },
 }));
 
 describe("/api/files", () => {
-  setupTestDatabase();
-
   beforeEach(async () => {
-    await cleanTestDb();
+    // Reset mocks instead of cleaning database
     
     // Mock FormData
     (global as any).FormData = class {
@@ -173,13 +159,14 @@ describe("/api/files", () => {
     });
 
     it("should upload a file successfully", async () => {
-      // Create a test user
-      const testUser = await createTestUser({
+      // Create a mock test user
+      const testUser = {
+        _id: new ObjectId(),
         email: 'test@example.com',
         role: 'user',
         name: 'Test User',
         department: 'test'
-      });
+      };
 
       // Create a mock file with arrayBuffer method
       const file = new Blob(['test content'], { type: 'text/plain' }) as any;
@@ -221,9 +208,15 @@ describe("/api/files", () => {
 
       const response = await uploadHandler(req);
       
+      // Debug logging
+      console.log('Response status:', response.status);
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+      
+      const data = await response.json();
+      console.log('Response data:', data);
+      
       // Verify response
       expect([200, 201]).toContain(response.status);
-      const data = await response.json();
       expect(data).toHaveProperty('success', true);
       expect(data).toHaveProperty('fileId');
       expect(data).toHaveProperty('message', 'File uploaded successfully');
@@ -335,7 +328,13 @@ describe("/api/files", () => {
 
   describe("GET /api/files", () => {
     it("should list user files", async () => {
-      const testUser = await createTestUser();
+      const testUser = {
+        _id: new ObjectId(),
+        email: 'test@example.com',
+        role: 'user',
+        name: 'Test User',
+        department: 'test'
+      };
       
       const req = new NextRequest('http://localhost:3000/api/files');
       (req as any).user = {
@@ -365,7 +364,13 @@ describe("/api/files", () => {
     });
 
     it("should support pagination", async () => {
-      const testUser = await createTestUser();
+      const testUser = {
+        _id: new ObjectId(),
+        email: 'test@example.com',
+        role: 'user',
+        name: 'Test User',
+        department: 'test'
+      };
       
       const req = new NextRequest('http://localhost:3000/api/files?limit=10&skip=0');
       (req as any).user = {
@@ -392,7 +397,13 @@ describe("/api/files", () => {
 
   describe("DELETE /api/files/[id]", () => {
     it("should delete user's own file", async () => {
-      const testUser = await createTestUser();
+      const testUser = {
+        _id: new ObjectId(),
+        email: 'test@example.com',
+        role: 'user',
+        name: 'Test User',
+        department: 'test'
+      };
       const fileId = new ObjectId().toString();
       
       const req = new NextRequest(`http://localhost:3000/api/files/${fileId}`, {
@@ -422,7 +433,13 @@ describe("/api/files", () => {
 
   describe("POST /api/files/[id]/approve", () => {
     it("should allow admin to approve file", async () => {
-      const testUser = await createTestUser({ role: 'admin' });
+      const testUser = {
+        _id: new ObjectId(),
+        email: 'admin@example.com',
+        role: 'admin',
+        name: 'Admin User',
+        department: 'admin'
+      };
       const fileId = new ObjectId().toString(); // Use valid ObjectId format
       
       const req = new NextRequest(`http://localhost:3000/api/files/${fileId}/approve`, {
@@ -450,7 +467,13 @@ describe("/api/files", () => {
     });
 
     it("should reject non-admin approval", async () => {
-      const testUser = await createTestUser();
+      const testUser = {
+        _id: new ObjectId(),
+        email: 'test@example.com',
+        role: 'user',
+        name: 'Test User',
+        department: 'test'
+      };
       const fileId = new ObjectId().toString(); // Use valid ObjectId format
       
       const req = new NextRequest(`http://localhost:3000/api/files/${fileId}/approve`, {
@@ -473,7 +496,13 @@ describe("/api/files", () => {
 
   describe("POST /api/files/[id]/share", () => {
     it("should create file share link", async () => {
-      const testUser = await createTestUser();
+      const testUser = {
+        _id: new ObjectId(),
+        email: 'test@example.com',
+        role: 'user',
+        name: 'Test User',
+        department: 'test'
+      };
       const fileId = new ObjectId().toString();
       
       const req = new NextRequest(`http://localhost:3000/api/files/${fileId}/share`, {
@@ -511,7 +540,13 @@ describe("/api/files", () => {
 
   describe("GET /api/files/[id]/download", () => {
     it("should download file", async () => {
-      const testUser = await createTestUser();
+      const testUser = {
+        _id: new ObjectId(),
+        email: 'test@example.com',
+        role: 'user',
+        name: 'Test User',
+        department: 'test'
+      };
       const fileId = new ObjectId().toString();
       
       const req = new NextRequest(`http://localhost:3000/api/files/${fileId}/download`);

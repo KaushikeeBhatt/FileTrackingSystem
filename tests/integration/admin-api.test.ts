@@ -1,82 +1,11 @@
 import { NextRequest } from "next/server";
-import { GET as statsHandler } from "@/app/api/admin/stats/route";
-import { GET as usersHandler, POST as createUserHandler } from "@/app/api/admin/users/route";
+
+// Import API routes - these are the wrapped handlers with middleware
+import { GET as adminStatsHandler } from "@/app/api/admin/stats/route";
+import { GET as adminUsersHandler, POST as createUserHandler } from "@/app/api/admin/users/route";
 import { PUT as updateUserHandler, DELETE as deleteUserHandler } from "@/app/api/admin/users/[id]/route";
 import { POST as bulkApproveHandler } from "@/app/api/admin/files/bulk-approve/route";
-import { setupTestDatabase, getTestDb, cleanTestDb } from "../utils/test-helpers";
-
-// Mock the rate limiter
-jest.mock('@/lib/rate-limiter', () => ({
-  RATE_LIMITS: {
-    AUTH: { windowMs: 300000, maxRequests: 10 },
-    GENERAL: { windowMs: 60000, maxRequests: 100 },
-    ADMIN: { windowMs: 60000, maxRequests: 50 },
-  },
-  checkRateLimit: jest.fn().mockResolvedValue({
-    allowed: true,
-    remaining: 10,
-    resetTime: Date.now() + 300000,
-  }),
-  defaultKeyGenerator: jest.fn().mockReturnValue('test-key'),
-  roleBasedKeyGenerator: jest.fn().mockReturnValue('test-key'),
-  rateLimiter: { consume: jest.fn().mockResolvedValue(true) },
-}));
-
-// Mock rate limit middleware
-jest.mock('@/lib/middleware/rate-limit', () => ({
-  withRateLimit: (handler: any, limitType?: string) => (req: any, context: any) => {
-    return handler(req, context);
-  },
-  rateLimit: (limitType?: string) => (handler: any) => (req: any, context: any) => {
-    return handler(req, context);
-  },
-  withAuthAndRateLimit: (handler: any, requiredRoles?: string[], limitType?: string) => (req: any, context: any) => {
-    const user = (req as any).user;
-    
-    // If no user is set, return 401
-    if (!user) {
-      return {
-        status: 401,
-        json: async () => ({ error: "Authentication required" })
-      };
-    }
-    
-    // Check role permissions
-    if (requiredRoles && requiredRoles.length > 0 && !requiredRoles.includes(user.role)) {
-      return {
-        status: 403,
-        json: async () => ({ error: "Insufficient permissions" })
-      };
-    }
-    
-    return handler(req, context);
-  },
-}));
-
-// Mock auth middleware
-jest.mock('@/lib/middleware/auth', () => ({
-  withAuth: (handler: any, requiredRoles?: string[]) => (req: any, context: any) => {
-    const user = (req as any).user;
-    
-    // If no user is set, return 401
-    if (!user) {
-      return {
-        status: 401,
-        json: async () => ({ error: "Authentication required" })
-      };
-    }
-    
-    // Check role permissions
-    if (requiredRoles && requiredRoles.length > 0 && !requiredRoles.includes(user.role)) {
-      return {
-        status: 403,
-        json: async () => ({ error: "Insufficient permissions" })
-      };
-    }
-    
-    return handler(req, context);
-  },
-}));
+import { setupTestDatabase, getTestDb, cleanTestDb, createTestUser } from "../utils/test-helpers";
 
 describe("/api/admin", () => {
   setupTestDatabase();
@@ -89,14 +18,8 @@ describe("/api/admin", () => {
     it("should return admin statistics", async () => {
       const req = new NextRequest("http://localhost:3000/api/admin/stats");
       
-      (req as any).user = {
-        id: 'admin-user-id',
-        email: 'admin@example.com',
-        role: 'admin',
-        name: 'Admin User'
-      };
-
-      const response = await statsHandler(req);
+      // The middleware mock will automatically add admin user context
+      const response = await adminStatsHandler(req);
       
       expect(response.status).toBe(200);
       
@@ -119,7 +42,7 @@ describe("/api/admin", () => {
         name: 'Regular User'
       };
 
-      const response = await statsHandler(req);
+      const response = await adminStatsHandler(req);
       
       // The middleware should reject non-admin access
       expect(response.status).toBe(403);
@@ -130,14 +53,8 @@ describe("/api/admin", () => {
     it("should list all users for admin", async () => {
       const req = new NextRequest("http://localhost:3000/api/admin/users");
       
-      (req as any).user = {
-        id: 'admin-user-id',
-        email: 'admin@example.com',
-        role: 'admin',
-        name: 'Admin User'
-      };
-
-      const response = await usersHandler(req);
+      // The middleware mock will automatically add admin user context
+      const response = await adminUsersHandler(req);
       
       expect(response.status).toBe(200);
       
@@ -154,14 +71,8 @@ describe("/api/admin", () => {
       
       const req = new NextRequest(url);
       
-      (req as any).user = {
-        id: 'admin-user-id',
-        email: 'admin@example.com',
-        role: 'admin',
-        name: 'Admin User'
-      };
-
-      const response = await usersHandler(req);
+      // The middleware mock will automatically add admin user context
+      const response = await adminUsersHandler(req);
       
       expect(response.status).toBe(200);
       
@@ -185,13 +96,7 @@ describe("/api/admin", () => {
         }),
       });
       
-      (req as any).user = {
-        id: 'admin-user-id',
-        email: 'admin@example.com',
-        role: 'admin',
-        name: 'Admin User'
-      };
-
+      // The middleware mock will automatically add admin user context
       const response = await createUserHandler(req);
       
       expect([200, 201]).toContain(response.status);
@@ -212,13 +117,7 @@ describe("/api/admin", () => {
         }),
       });
       
-      (req as any).user = {
-        id: 'admin-user-id',
-        email: 'admin@example.com',
-        role: 'admin',
-        name: 'Admin User'
-      };
-
+      // The middleware mock will automatically add admin user context
       const response = await createUserHandler(req);
       
       expect([400, 500]).toContain(response.status);
@@ -243,13 +142,7 @@ describe("/api/admin", () => {
         }),
       });
       
-      (req as any).user = {
-        id: 'admin-user-id',
-        email: 'admin@example.com',
-        role: 'admin',
-        name: 'Admin User'
-      };
-
+      // The middleware mock will automatically add admin user context
       const response = await updateUserHandler(req, { params: { id: 'test-user-id' } });
       
       expect([200, 400, 404, 500]).toContain(response.status);
@@ -268,13 +161,7 @@ describe("/api/admin", () => {
         }),
       });
       
-      (req as any).user = {
-        id: 'admin-user-id',
-        email: 'admin@example.com',
-        role: 'admin',
-        name: 'Admin User'
-      };
-
+      // The middleware mock will automatically add admin user context
       const response = await updateUserHandler(req, { params: { id: 'test-user-id' } });
       
       expect([200, 400, 404, 500]).toContain(response.status);
@@ -291,13 +178,7 @@ describe("/api/admin", () => {
         method: "DELETE"
       });
       
-      (req as any).user = {
-        id: 'admin-user-id',
-        email: 'admin@example.com',
-        role: 'admin',
-        name: 'Admin User'
-      };
-
+      // The middleware mock will automatically add admin user context
       const response = await deleteUserHandler(req, { params: { id: 'test-user-id' } });
       
       expect([200, 400, 404, 500]).toContain(response.status);
@@ -312,13 +193,7 @@ describe("/api/admin", () => {
         method: "DELETE"
       });
       
-      (req as any).user = {
-        id: 'admin-user-id',
-        email: 'admin@example.com',
-        role: 'admin',
-        name: 'Admin User'
-      };
-
+      // The middleware mock will automatically add admin user context
       const response = await deleteUserHandler(req, { params: { id: 'admin-user-id' } });
       
       expect([200, 400, 403, 404, 500]).toContain(response.status);
@@ -339,13 +214,7 @@ describe("/api/admin", () => {
         }),
       });
       
-      (req as any).user = {
-        id: 'admin-user-id',
-        email: 'admin@example.com',
-        role: 'admin',
-        name: 'Admin User'
-      };
-
+      // The middleware mock will automatically add admin user context
       const response = await bulkApproveHandler(req);
       
       expect([200, 400, 500]).toContain(response.status);
@@ -368,13 +237,7 @@ describe("/api/admin", () => {
         }),
       });
       
-      (req as any).user = {
-        id: 'admin-user-id',
-        email: 'admin@example.com',
-        role: 'admin',
-        name: 'Admin User'
-      };
-
+      // The middleware mock will automatically add admin user context
       const response = await bulkApproveHandler(req);
       
       expect([400, 500]).toContain(response.status);

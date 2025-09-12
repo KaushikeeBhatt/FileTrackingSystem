@@ -53,9 +53,19 @@ export class AuditOperations {
 
     // Role-based filtering
     if (user.role === "user") {
-      matchConditions.userId = new ObjectId(user.id)
+      try {
+        matchConditions.userId = new ObjectId(user.id)
+      } catch (error) {
+        // If user.id is not a valid ObjectId, skip this filter
+        console.warn('Invalid user.id for ObjectId:', user.id)
+      }
     } else if (filters.userId) {
-      matchConditions.userId = new ObjectId(filters.userId)
+      try {
+        matchConditions.userId = new ObjectId(filters.userId)
+      } catch (error) {
+        // If filters.userId is not a valid ObjectId, skip this filter
+        console.warn('Invalid filters.userId for ObjectId:', filters.userId)
+      }
     }
 
     if (filters.action) {
@@ -67,7 +77,12 @@ export class AuditOperations {
     }
 
     if (filters.resourceId) {
-      matchConditions.resourceId = new ObjectId(filters.resourceId)
+      try {
+        matchConditions.resourceId = new ObjectId(filters.resourceId)
+      } catch (error) {
+        // If filters.resourceId is not a valid ObjectId, skip this filter
+        console.warn('Invalid filters.resourceId for ObjectId:', filters.resourceId)
+      }
     }
 
     if (filters.status) {
