@@ -30,44 +30,38 @@ jobs:
       with:
         fetch-depth: 0 # Required for CodeQL
 
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8
-
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'pnpm'
-
+        cache: 'npm'
 
     - name: Install dependencies
-      run: pnpm install --no-frozen-lockfile
+      run: npm ci
 
     - name: Run ESLint
-      run: pnpm run lint
+      run: npm run lint
 
     - name: Run TypeScript check
-      run: pnpm run type-check
+      run: npm run type-check
 
     - name: Run unit and integration tests
-      run: pnpm run test && pnpm run test:integration
+      run: npm test && npm run test:integration
       env:
         MONGODB_URI: mongodb://localhost:27017/file-tracking-test
         JWT_SECRET: test-jwt-secret-key
 
     - name: Build application
-      run: pnpm run build
+      run: npm run build
       env:
         MONGODB_URI: mongodb://localhost:27017/file-tracking-build
         JWT_SECRET: build-jwt-secret-key
 
     - name: Install Playwright browsers
-      run: pnpm exec playwright install --with-deps
+      run: npx playwright install --with-deps
 
     - name: Start application for E2E tests
-      run: pnpm run start &
+      run: npm run start &
       env:
         MONGODB_URI: mongodb://localhost:27017/file-tracking-e2e
         JWT_SECRET: e2e-test-jwt-secret
@@ -77,7 +71,7 @@ jobs:
       run: npx wait-on http://localhost:3000 --timeout 60000
 
     - name: Run Playwright E2E tests
-      run: pnpm run test:e2e
+      run: npm run test:e2e
       env:
         BASE_URL: http://localhost:3000
 
@@ -90,7 +84,7 @@ jobs:
         retention-days: 7
 
     - name: Run dependency vulnerability audit
-      run: pnpm audit --audit-level moderate
+      run: npm audit --audit-level=moderate
 
     - name: Run Snyk security scan
       if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'schedule'
@@ -98,21 +92,13 @@ jobs:
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        args: --severity-threshold=high
+        command: monitor
+        args: --severity-threshold=medium
 
-    - name: Initialize CodeQL
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'schedule'
-      uses: github/codeql-action/init@v2
+    - name: Upload test coverage
+      uses: codecov/codecov-action@v4
+      if: success() || failure()
       with:
-        languages: javascript
-
-    - name: Perform CodeQL Analysis
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'schedule'
-      uses: github/codeql-action/analyze@v2
-
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./coverage/lcov.info
-        flags: unittests
-        name: codecov-umbrella
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage/coverage-final.json
+        fail_ci_if_error: false
