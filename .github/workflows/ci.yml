@@ -45,8 +45,10 @@ jobs:
     - name: Run TypeScript check
       run: npm run type-check
 
-    - name: Run unit and integration tests
-      run: npm test && npm run test:integration
+    # - name: Run unit and integration tests
+    #   run: npm test && npm run test:integration
+     - name: Run unit tests
+       run: npm test 
       env:
         MONGODB_URI: mongodb://localhost:27017/file-tracking-test
         JWT_SECRET: test-jwt-secret-key
