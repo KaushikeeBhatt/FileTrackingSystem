@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="12" failures="0" skipped="0" errors="0" time="84.90088100000001">
-<testsuite name="auth.spec.ts" timestamp="2025-09-14T14:33:18.884Z" hostname="chromium" tests="3" failures="0" skipped="0" time="7.315" errors="0">
-<testcase name="Authentication Flow › should register a new user" classname="auth.spec.ts" time="2.425">
+<testsuites id="" name="" tests="12" failures="0" skipped="0" errors="0" time="114.927962">
+<testsuite name="auth.spec.ts" timestamp="2025-09-14T15:24:09.759Z" hostname="chromium" tests="3" failures="0" skipped="0" time="10.886" errors="0">
+<testcase name="Authentication Flow › should register a new user" classname="auth.spec.ts" time="4.168">
 <system-out>
 <![CDATA[Using email for chromium: test-chromium@example.com
 Intercepted registration request
@@ -9,17 +9,17 @@ Successfully navigated to dashboard
 ]]>
 </system-out>
 </testcase>
-<testcase name="Authentication Flow › should login existing user" classname="auth.spec.ts" time="3.327">
+<testcase name="Authentication Flow › should login existing user" classname="auth.spec.ts" time="4.979">
 </testcase>
-<testcase name="Authentication Flow › should show error for invalid login" classname="auth.spec.ts" time="1.563">
-</testcase>
-</testsuite>
-<testsuite name="file-upload.spec.ts" timestamp="2025-09-14T14:33:18.884Z" hostname="chromium" tests="1" failures="0" skipped="0" time="3.102" errors="0">
-<testcase name="File Upload Flow › should successfully upload a document with complete metadata" classname="file-upload.spec.ts" time="3.102">
+<testcase name="Authentication Flow › should show error for invalid login" classname="auth.spec.ts" time="1.739">
 </testcase>
 </testsuite>
-<testsuite name="auth.spec.ts" timestamp="2025-09-14T14:33:18.884Z" hostname="firefox" tests="3" failures="0" skipped="0" time="18.303" errors="0">
-<testcase name="Authentication Flow › should register a new user" classname="auth.spec.ts" time="7.991">
+<testsuite name="file-upload.spec.ts" timestamp="2025-09-14T15:24:09.759Z" hostname="chromium" tests="1" failures="0" skipped="0" time="5.366" errors="0">
+<testcase name="File Upload Flow › should successfully upload a document with complete metadata" classname="file-upload.spec.ts" time="5.366">
+</testcase>
+</testsuite>
+<testsuite name="auth.spec.ts" timestamp="2025-09-14T15:24:09.759Z" hostname="firefox" tests="3" failures="0" skipped="0" time="19.82" errors="0">
+<testcase name="Authentication Flow › should register a new user" classname="auth.spec.ts" time="8.503">
 <system-out>
 <![CDATA[Using email for firefox: test-firefox@example.com
 Intercepted registration request
@@ -28,17 +28,17 @@ Successfully navigated to dashboard
 ]]>
 </system-out>
 </testcase>
-<testcase name="Authentication Flow › should login existing user" classname="auth.spec.ts" time="7.329">
+<testcase name="Authentication Flow › should login existing user" classname="auth.spec.ts" time="8.293">
 </testcase>
-<testcase name="Authentication Flow › should show error for invalid login" classname="auth.spec.ts" time="2.983">
-</testcase>
-</testsuite>
-<testsuite name="file-upload.spec.ts" timestamp="2025-09-14T14:33:18.884Z" hostname="firefox" tests="1" failures="0" skipped="0" time="11.012" errors="0">
-<testcase name="File Upload Flow › should successfully upload a document with complete metadata" classname="file-upload.spec.ts" time="11.012">
+<testcase name="Authentication Flow › should show error for invalid login" classname="auth.spec.ts" time="3.024">
 </testcase>
 </testsuite>
-<testsuite name="auth.spec.ts" timestamp="2025-09-14T14:33:18.884Z" hostname="webkit" tests="3" failures="0" skipped="0" time="10.941" errors="0">
-<testcase name="Authentication Flow › should register a new user" classname="auth.spec.ts" time="3.049">
+<testsuite name="file-upload.spec.ts" timestamp="2025-09-14T15:24:09.759Z" hostname="firefox" tests="1" failures="0" skipped="0" time="10.85" errors="0">
+<testcase name="File Upload Flow › should successfully upload a document with complete metadata" classname="file-upload.spec.ts" time="10.85">
+</testcase>
+</testsuite>
+<testsuite name="auth.spec.ts" timestamp="2025-09-14T15:24:09.759Z" hostname="webkit" tests="3" failures="0" skipped="0" time="13.883" errors="0">
+<testcase name="Authentication Flow › should register a new user" classname="auth.spec.ts" time="4.796">
 <system-out>
 <![CDATA[Using email for webkit: test-webkit@example.com
 Intercepted registration request
@@ -47,13 +47,13 @@ Successfully navigated to dashboard
 ]]>
 </system-out>
 </testcase>
-<testcase name="Authentication Flow › should login existing user" classname="auth.spec.ts" time="5.68">
+<testcase name="Authentication Flow › should login existing user" classname="auth.spec.ts" time="6.208">
 </testcase>
-<testcase name="Authentication Flow › should show error for invalid login" classname="auth.spec.ts" time="2.212">
+<testcase name="Authentication Flow › should show error for invalid login" classname="auth.spec.ts" time="2.879">
 </testcase>
 </testsuite>
-<testsuite name="file-upload.spec.ts" timestamp="2025-09-14T14:33:18.884Z" hostname="webkit" tests="1" failures="0" skipped="0" time="5.023" errors="0">
-<testcase name="File Upload Flow › should successfully upload a document with complete metadata" classname="file-upload.spec.ts" time="5.023">
+<testsuite name="file-upload.spec.ts" timestamp="2025-09-14T15:24:09.759Z" hostname="webkit" tests="1" failures="0" skipped="0" time="7.681" errors="0">
+<testcase name="File Upload Flow › should successfully upload a document with complete metadata" classname="file-upload.spec.ts" time="7.681">
 </testcase>
 </testsuite>
 </testsuites>
