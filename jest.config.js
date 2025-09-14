@@ -40,6 +40,7 @@ const customJestConfig = {
     '/tests/integration/admin-api.test.ts',
     '/tests/integration/search-api.test.ts',
     '/tests/unit/audit-operations.test.ts',
+    '/tests/unit/lib/file-operations.test.ts',
   ],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['@swc/jest', {
