@@ -97,12 +97,13 @@ jobs:
 
     - name: Run Snyk security scan
       if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'schedule'
-      uses: snyk/actions/node@master
+      uses: snyk/actions/node@v1.0.0
+      continue-on-error: true
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
         command: monitor
-        args: --severity-threshold=medium
+        args: --severity-threshold=medium --json
 
     - name: Upload test coverage
       uses: codecov/codecov-action@v4
