@@ -36,15 +36,12 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
-    - name: Install dependencies
-      run: npm ci
-      env:
-        MONGODB_URI: mongodb://localhost:27017/test
-        JWT_SECRET: this-is-a-test-secret-key-must-be-32-chars-long
-        NODE_ENV: test
-        BASE_URL: http://localhost:3000
-        MAX_FILE_SIZE: 10485760  # 10MB
-        ALLOWED_FILE_TYPES: application/pdf,image/jpeg,image/png
+    - name: Clear npm cache and install dependencies
+      run: |
+        npm cache clean --force
+        npm ci --prefer-offline --no-audit
+        # Install SWC platform-specific binaries for Ubuntu
+        npm install @swc/core-linux-x64-gnu --save-dev --no-save || true
 
     - name: Run ESLint
       run: npm run lint
@@ -55,8 +52,10 @@ jobs:
     # - name: Run unit and integration tests
     #   run: npm test && npm run test:integration
     - name: Run unit tests
-      run: npm test 
+      run: npm test -- --coverage=false
       env:
+        CI: true
+        SWC_BINARY_PATH: /usr/local/lib/node_modules/@swc/core-linux-x64-gnu/swc.linux-x64-gnu.node
         MONGODB_URI: mongodb://localhost:27017/file-tracking-test
         JWT_SECRET: this-is-a-test-secret-key-must-be-32-chars-long
         NODE_ENV: test

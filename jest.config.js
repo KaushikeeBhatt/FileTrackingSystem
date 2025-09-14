@@ -64,7 +64,7 @@ const customJestConfig = {
   moduleDirectories: ['node_modules', '<rootDir>/'],
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node', 'mjs'],
   extensionsToTreatAsEsm: ['.ts', '.tsx', '.mts', '.cts'],
-  collectCoverage: true,
+  collectCoverage: process.env.CI !== 'true',
   collectCoverageFrom: [
     'app/api/**/*.{js,jsx,ts,tsx}',
     'lib/**/*.{js,jsx,ts,tsx}',
