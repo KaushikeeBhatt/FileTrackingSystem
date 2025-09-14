@@ -53,10 +53,17 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
     env: {
-      MONGODB_URI: process.env.MONGODB_URI || "mongodb://localhost:27017/yfile-tracking-system",
-      JWT_SECRET: process.env.JWT_SECRET || "this-is-a-test-jwt-secret-key-that-is-32-characters-long-for-e2e-tests",
+      MONGODB_URI: process.env.MONGODB_URI || "mongodb://localhost:27017/file-tracking-system",
+      JWT_SECRET: process.env.JWT_SECRET || "this-is-a-test-jwt-secret-key-that-is-at-least-32-characters-long-for-e2e-tests",
+      NODE_ENV: "production",
+      BASE_URL: process.env.BASE_URL || "http://localhost:3000",
+      MAX_FILE_SIZE: process.env.MAX_FILE_SIZE || "52428800", // 50MB in bytes
+      ALLOWED_FILE_TYPES: process.env.ALLOWED_FILE_TYPES || ".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.mp4,.avi,.xlsx,.pptx,.zip,.rar",
       PORT: process.env.PORT || "3000",
-      NODE_ENV: "production"
+      // Optional admin variables for demo user creation
+      ADMIN_EMAIL: process.env.ADMIN_EMAIL || "admin@filetracking.com",
+      ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || "admin123",
+      ADMIN_NAME: process.env.ADMIN_NAME || "Admin User"
     }
   },
 })
