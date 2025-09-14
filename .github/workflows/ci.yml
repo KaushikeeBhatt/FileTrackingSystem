@@ -82,7 +82,7 @@ jobs:
       env:
         BASE_URL: http://localhost:3000
         MONGODB_URI: mongodb://localhost:27017/file-tracking-e2e
-        JWT_SECRET: e2e-test-jwt-secret
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
         PORT: 3000
 
     - name: Upload Playwright report
