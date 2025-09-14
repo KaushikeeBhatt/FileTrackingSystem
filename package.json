@@ -11,10 +11,13 @@
     "test:watch": "jest --watch --config=jest.config.js",
     "test:coverage": "jest --coverage --config=jest.config.js",
     "test:integration": "jest --config=jest.config.js --testPathPattern=tests/integration",
-    "test:e2e": "playwright test",
+    "test:e2e": "npm run clean && playwright test",
+    "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
-    "setup:admin": "tsx scripts/setup-admin.js",
+    "clean": "node scripts/clean.js",
+    "setup:admin": "node scripts/setup-admin.js",
+    "setup:demo-admin": "node scripts/create-demo-user.js",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

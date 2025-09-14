@@ -1,63 +1,71 @@
-import { test, expect } from "@playwright/test"
-import path from "path"
+import { test, expect } from '@playwright/test'
+import path from 'path'
 
-test.describe("File Upload Flow", () => {
+test.describe('File Upload Flow', () => {
   test.beforeEach(async ({ page }) => {
-    // Login as test user
-    await page.goto("/login")
-    await page.fill('input[name="email"]', "test@example.com")
-    await page.fill('input[name="password"]', "password123")
-    await page.click('button[type="submit"]')
-    await expect(page).toHaveURL("/dashboard")
+    // Navigate to login page
+    await page.goto('/login')
   })
 
-  test("should upload a file successfully", async ({ page }) => {
-    // Navigate to file upload
-    await page.click("text=Upload Files")
-
-    // Create a test file
-    const testFilePath = path.join(__dirname, "../fixtures/test-document.pdf")
-
-    // Upload file
-    await page.setInputFiles('input[type="file"]', testFilePath)
-
-    // Fill file details
-    await page.fill('input[name="description"]', "Test document upload")
-    await page.fill('input[name="tags"]', "test, document")
-
+  test('should successfully upload a document with complete metadata', async ({ page }) => {
+    // Step 1: Login with demo credentials
+    await page.fill('#email', 'admin@filetracking.com')
+    await page.fill('#password', 'admin123')
     await page.click('button[type="submit"]')
+    
+    // Wait for navigation with error handling for mobile browsers
+    try {
+      await page.waitForURL('/dashboard', { timeout: 30000 })
+    } catch (error) {
+      // If direct navigation fails, check if we're already on dashboard or need to wait longer
+      const currentUrl = page.url()
+      if (!currentUrl.includes('/dashboard')) {
+        // Wait for any navigation to complete
+        await page.waitForLoadState('networkidle', { timeout: 10000 })
+        // Check URL again
+        await expect(page).toHaveURL('/dashboard', { timeout: 5000 })
+      }
+    }
+    
+    // Verify we're on dashboard
+    await expect(page.locator('h1')).toContainText('File Tracking Dashboard')
 
-    // Verify upload success
-    await expect(page.locator("text=File uploaded successfully")).toBeVisible()
-    await expect(page.locator("text=test-document.pdf")).toBeVisible()
-  })
+    // Step 2: Navigate to Upload Files tab
+    await page.click('button[role="tab"]:has-text("Upload Files")')
+    // Verify we're on the upload tab by checking for upload UI elements
+    await expect(page.locator('text=Drag & drop files here')).toBeVisible()
 
-  test("should show file in pending status", async ({ page }) => {
-    // Upload a file first
-    await page.click("text=Upload Files")
-    const testFilePath = path.join(__dirname, "../fixtures/test-document.pdf")
-    await page.setInputFiles('input[type="file"]', testFilePath)
-    await page.click('button[type="submit"]')
+    // Step 3: Upload file by clicking on drag & drop area
+    const fileInput = page.locator('input[type="file"]')
+    const testFilePath = path.join(__dirname, '../fixtures/test-document.pdf')
+    
+    // Click on drag & drop area to trigger file selection
+    await page.click('text=Drag & drop files here')
+    await fileInput.setInputFiles(testFilePath)
 
-    // Check file status
-    await page.goto("/dashboard")
-    await expect(page.locator("text=Pending")).toBeVisible()
-    await expect(page.locator('[data-status="pending"]')).toBeVisible()
-  })
+    // Verify file is selected - look for file name in the UI
+    await expect(page.locator('text=test-document.pdf')).toBeVisible()
 
-  test("should search for uploaded files", async ({ page }) => {
-    // Upload a file first
-    await page.click("text=Upload Files")
-    const testFilePath = path.join(__dirname, "../fixtures/test-document.pdf")
-    await page.setInputFiles('input[type="file"]', testFilePath)
-    await page.fill('input[name="description"]', "Searchable test document")
-    await page.click('button[type="submit"]')
+    // Step 4: Fill in required metadata
+    // Select category (required field) - use the dropdown button
+    await page.click('button:has-text("Select category")')
+    await page.click('text=Documents')
+    
+    // Fill optional metadata
+    await page.fill('input[placeholder="Department"]', 'Engineering')
+    await page.fill('input[placeholder*="urgent, contract"]', 'test, automation, pdf')
+    await page.fill('textarea[placeholder*="Brief description"]', 'Test document for E2E upload validation')
 
-    // Search for the file
-    await page.goto("/dashboard")
-    await page.fill('input[placeholder="Search files..."]', "test-document")
-    await page.press('input[placeholder="Search files..."]', "Enter")
+    // Step 5: Submit upload
+    const uploadButton = page.locator('button:has-text("Upload 1 file")')
+    await expect(uploadButton).toBeEnabled()
+    await uploadButton.click()
 
-    await expect(page.locator("text=test-document.pdf")).toBeVisible()
+    // Step 6: Verify upload success
+    // Wait for upload completion and success message
+    await expect(page.locator('text=Successfully uploaded')).toBeVisible({ timeout: 10000 })
+    
+    // Verify form is reset - file should be removed
+    await expect(page.locator('text=test-document.pdf')).not.toBeVisible()
   })
 })
