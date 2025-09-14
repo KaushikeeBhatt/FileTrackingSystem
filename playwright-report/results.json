@@ -120,368 +120,6 @@
   },
   "suites": [
     {
-      "title": "auth.spec.ts",
-      "file": "auth.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [],
-      "suites": [
-        {
-          "title": "Authentication Flow",
-          "file": "auth.spec.ts",
-          "line": 3,
-          "column": 6,
-          "specs": [
-            {
-              "title": "should register a new user",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1938,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "Using email for chromium: test-chromium@example.com\n"
-                        },
-                        {
-                          "text": "Intercepted registration request\n"
-                        },
-                        {
-                          "text": "Registration response status: \u001b[33m201\u001b[39m\n"
-                        },
-                        {
-                          "text": "Successfully navigated to dashboard\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T14:07:00.760Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "d748ac400d08b85935ef-bdcc070f92560e170f60",
-              "file": "auth.spec.ts",
-              "line": 8,
-              "column": 7
-            },
-            {
-              "title": "should login existing user",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 3091,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T14:07:02.870Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "d748ac400d08b85935ef-9ebc2e0938b679364fbd",
-              "file": "auth.spec.ts",
-              "line": 84,
-              "column": 7
-            },
-            {
-              "title": "should show error for invalid login",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1351,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T14:07:05.989Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "d748ac400d08b85935ef-e2fa21dc7c02b6bc24f2",
-              "file": "auth.spec.ts",
-              "line": 174,
-              "column": 7
-            },
-            {
-              "title": "should register a new user",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 2,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 7210,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "Using email for firefox: test-firefox@example.com\n"
-                        },
-                        {
-                          "text": "Intercepted registration request\n"
-                        },
-                        {
-                          "text": "Registration response status: \u001b[33m201\u001b[39m\n"
-                        },
-                        {
-                          "text": "Successfully navigated to dashboard\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T14:07:04.983Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "d748ac400d08b85935ef-64799de1b5922bd11904",
-              "file": "auth.spec.ts",
-              "line": 8,
-              "column": 7
-            },
-            {
-              "title": "should login existing user",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 2,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 7250,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T14:07:14.270Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "d748ac400d08b85935ef-c1587d3b27f85501eab2",
-              "file": "auth.spec.ts",
-              "line": 84,
-              "column": 7
-            },
-            {
-              "title": "should show error for invalid login",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 2,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 2767,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T14:07:21.661Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "d748ac400d08b85935ef-331eae1120a21e1bf5a7",
-              "file": "auth.spec.ts",
-              "line": 174,
-              "column": 7
-            },
-            {
-              "title": "should register a new user",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "webkit",
-                  "projectName": "webkit",
-                  "results": [
-                    {
-                      "workerIndex": 4,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4691,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "Using email for webkit: test-webkit@example.com\n"
-                        },
-                        {
-                          "text": "Intercepted registration request\n"
-                        },
-                        {
-                          "text": "Registration response status: \u001b[33m201\u001b[39m\n"
-                        },
-                        {
-                          "text": "Successfully navigated to dashboard\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T14:07:28.012Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "d748ac400d08b85935ef-120e4e5b3896730440ab",
-              "file": "auth.spec.ts",
-              "line": 8,
-              "column": 7
-            },
-            {
-              "title": "should login existing user",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "webkit",
-                  "projectName": "webkit",
-                  "results": [
-                    {
-                      "workerIndex": 4,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 6264,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T14:07:33.030Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "d748ac400d08b85935ef-2a4f01db9b0335d1566e",
-              "file": "auth.spec.ts",
-              "line": 84,
-              "column": 7
-            },
-            {
-              "title": "should show error for invalid login",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "webkit",
-                  "projectName": "webkit",
-                  "results": [
-                    {
-                      "workerIndex": 4,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2536,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T14:07:39.334Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "d748ac400d08b85935ef-c624513983a8b902e209",
-              "file": "auth.spec.ts",
-              "line": 174,
-              "column": 7
-            }
-          ]
-        }
-      ]
-    },
-    {
       "title": "file-upload.spec.ts",
       "file": "file-upload.spec.ts",
       "column": 0,
@@ -507,15 +145,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
-                      "parallelIndex": 1,
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2776,
+                      "duration": 3237,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T14:07:00.747Z",
+                      "startTime": "2025-09-14T14:18:04.756Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -541,15 +179,15 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 3,
-                      "parallelIndex": 0,
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 9717,
+                      "duration": 5747,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T14:07:10.852Z",
+                      "startTime": "2025-09-14T14:18:04.740Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -575,15 +213,15 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 5,
-                      "parallelIndex": 1,
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 6208,
+                      "duration": 5550,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T14:07:29.389Z",
+                      "startTime": "2025-09-14T14:18:11.217Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -603,9 +241,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-09-14T14:06:22.826Z",
-    "duration": 80083.958,
-    "expected": 12,
+    "startTime": "2025-09-14T14:17:29.876Z",
+    "duration": 47701.163,
+    "expected": 3,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

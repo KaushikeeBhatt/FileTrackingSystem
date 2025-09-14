@@ -63,7 +63,7 @@ test.describe('File Upload Flow', () => {
 
     // Step 6: Verify upload success
     // Wait for upload completion and success message
-    await expect(page.locator('text=Successfully uploaded')).toBeVisible({ timeout: 10000 })
+    await expect(page.locator('text=Successfully uploaded 1 file(s)')).toBeVisible({ timeout: 10000 })
     
     // Verify form is reset - file should be removed
     await expect(page.locator('text=test-document.pdf')).not.toBeVisible()
