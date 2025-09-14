@@ -57,10 +57,12 @@ export class FileOperations {
       throw new Error(`File size exceeds the limit of ${(maxFileSize / (1024 * 1024)).toFixed(2)}MB`)
     }
     
-    const allowedTypes = envConfig.ALLOWED_FILE_TYPES.split(",").map((t: string) => t.trim());
+    // Get file extension from original name
+    const fileExtension = path.extname(originalName).toLowerCase();
+    const allowedTypes = envConfig.ALLOWED_FILE_TYPES.split(",").map((t: string) => t.trim().toLowerCase());
       
-    if (allowedTypes.length > 0 && !allowedTypes.includes(mimeType)) {
-      throw new Error(`File type '${mimeType}' is not allowed.`)
+    if (allowedTypes.length > 0 && !allowedTypes.includes(fileExtension)) {
+      throw new Error(`File type '${fileExtension}' is not allowed. Allowed types: ${allowedTypes.join(', ')}`)
     }
 
     const fileName = this.generateFileName(originalName)
