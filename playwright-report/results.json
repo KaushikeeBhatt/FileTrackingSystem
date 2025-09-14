@@ -148,7 +148,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2692,
+                      "duration": 2213,
                       "errors": [],
                       "stdout": [
                         {
@@ -166,7 +166,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T15:44:05.414Z",
+                      "startTime": "2025-09-14T16:28:03.647Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -195,12 +195,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3324,
+                      "duration": 3667,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T15:44:09.439Z",
+                      "startTime": "2025-09-14T16:28:06.010Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -229,12 +229,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1398,
+                      "duration": 1438,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T15:44:12.796Z",
+                      "startTime": "2025-09-14T16:28:09.698Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -260,10 +260,10 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 1,
                       "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 5329,
+                      "duration": 4928,
                       "errors": [],
                       "stdout": [
                         {
@@ -281,7 +281,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T15:44:11.478Z",
+                      "startTime": "2025-09-14T16:28:03.669Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -307,15 +307,15 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 1,
                       "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 6791,
+                      "duration": 5641,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T15:44:17.828Z",
+                      "startTime": "2025-09-14T16:28:09.490Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -341,15 +341,15 @@
                   "projectName": "firefox",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 1,
                       "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 2439,
+                      "duration": 2187,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T15:44:24.663Z",
+                      "startTime": "2025-09-14T16:28:15.161Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -375,10 +375,10 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 4,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3727,
+                      "duration": 4684,
                       "errors": [],
                       "stdout": [
                         {
@@ -396,7 +396,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T15:44:29.428Z",
+                      "startTime": "2025-09-14T16:28:13.607Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -422,15 +422,15 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 4,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5217,
+                      "duration": 5320,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T15:44:33.404Z",
+                      "startTime": "2025-09-14T16:28:18.450Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -456,15 +456,15 @@
                   "projectName": "webkit",
                   "results": [
                     {
-                      "workerIndex": 4,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1911,
+                      "duration": 2790,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T15:44:38.644Z",
+                      "startTime": "2025-09-14T16:28:23.808Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -480,132 +480,13 @@
           ]
         }
       ]
-    },
-    {
-      "title": "file-upload.spec.ts",
-      "file": "file-upload.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [],
-      "suites": [
-        {
-          "title": "File Upload Flow",
-          "file": "file-upload.spec.ts",
-          "line": 4,
-          "column": 6,
-          "specs": [
-            {
-              "title": "should successfully upload a document with complete metadata",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 3459,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T15:44:05.447Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "d240948938e2e45fd2aa-9d54a2f4b4f0c2d9d219",
-              "file": "file-upload.spec.ts",
-              "line": 10,
-              "column": 7
-            },
-            {
-              "title": "should successfully upload a document with complete metadata",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 3,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 7885,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T15:44:16.629Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "d240948938e2e45fd2aa-9b15756acb2930d4f82b",
-              "file": "file-upload.spec.ts",
-              "line": 10,
-              "column": 7
-            },
-            {
-              "title": "should successfully upload a document with complete metadata",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "webkit",
-                  "projectName": "webkit",
-                  "results": [
-                    {
-                      "workerIndex": 5,
-                      "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 5186,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T15:44:30.299Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "d240948938e2e45fd2aa-caa2c80eed2b0d29bd8e",
-              "file": "file-upload.spec.ts",
-              "line": 10,
-              "column": 7
-            }
-          ]
-        }
-      ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-09-14T15:43:09.698Z",
-    "duration": 91325.40699999999,
-    "expected": 12,
+    "startTime": "2025-09-14T16:27:28.855Z",
+    "duration": 58302.757,
+    "expected": 9,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
