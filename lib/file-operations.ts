@@ -45,6 +45,27 @@ export class FileOperations {
     await fs.writeFile(filePath, buffer)
   }
 
+  private static isFileTypeAllowed(originalName: string, mimeType: string): boolean {
+    const fileExtension = path.extname(originalName).toLowerCase()
+    const allowedTypes = envConfig.ALLOWED_FILE_TYPES.split(",").map((t: string) => t.trim().toLowerCase())
+    
+    if (allowedTypes.length === 0) {
+      return true // No restrictions
+    }
+    
+    // Check if MIME type is allowed
+    if (allowedTypes.includes(mimeType.toLowerCase())) {
+      return true
+    }
+    
+    // Check if file extension is allowed (fallback)
+    if (allowedTypes.includes(fileExtension)) {
+      return true
+    }
+    
+    return false
+  }
+
   static async uploadFile(
     file: { buffer: Buffer; originalName: string; mimeType: string },
     user: AuthUser,
@@ -57,12 +78,11 @@ export class FileOperations {
       throw new Error(`File size exceeds the limit of ${(maxFileSize / (1024 * 1024)).toFixed(2)}MB`)
     }
     
-    // Get file extension from original name
-    const fileExtension = path.extname(originalName).toLowerCase();
-    const allowedTypes = envConfig.ALLOWED_FILE_TYPES.split(",").map((t: string) => t.trim().toLowerCase());
-      
-    if (allowedTypes.length > 0 && !allowedTypes.includes(fileExtension)) {
-      throw new Error(`File type '${fileExtension}' is not allowed. Allowed types: ${allowedTypes.join(', ')}`)
+    // Validate file type
+    if (!this.isFileTypeAllowed(originalName, mimeType)) {
+      const fileExtension = path.extname(originalName).toLowerCase()
+      const allowedTypes = envConfig.ALLOWED_FILE_TYPES.split(",").map((t: string) => t.trim())
+      throw new Error(`File type '${fileExtension}' (${mimeType}) is not allowed. Allowed types: ${allowedTypes.join(', ')}`)
     }
 
     const fileName = this.generateFileName(originalName)
@@ -213,5 +233,162 @@ export class FileOperations {
   static async getFileBuffer(fileName: string): Promise<Buffer> {
     const filePath = path.join(this.uploadDir, fileName)
     return await fs.readFile(filePath)
+  }
+
+  private static async createFileVersion(
+    fileId: string,
+    data: {
+      version: number
+      filePath: string
+      fileSize: number
+      uploadedBy: string
+      changes?: string
+      checksum: string
+    },
+  ) {
+    const db = await this.getDb()
+    const doc = {
+      fileId: new ObjectId(fileId),
+      version: data.version,
+      filePath: data.filePath,
+      fileSize: data.fileSize,
+      uploadedBy: new ObjectId(data.uploadedBy),
+      uploadedAt: new Date(),
+      changes: data.changes,
+      checksum: data.checksum,
+    }
+    await db.collection("file_versions").insertOne(doc)
+    return doc
+  }
+
+  static async uploadNewVersion(
+    fileId: string,
+    newFile: { buffer: Buffer; originalName: string; mimeType: string },
+    user: AuthUser,
+    changes?: string,
+  ) {
+    const db = await this.getDb()
+    const current = await this.getFileById(fileId)
+    if (!current) {
+      throw new Error("File not found")
+    }
+
+    const maxFileSize = envConfig.MAX_FILE_SIZE
+    if (newFile.buffer.length > maxFileSize) {
+      throw new Error(`File size exceeds the limit of ${(maxFileSize / (1024 * 1024)).toFixed(2)}MB`)
+    }
+
+    // Validate file type
+    if (!this.isFileTypeAllowed(newFile.originalName, newFile.mimeType)) {
+      const fileExtension = path.extname(newFile.originalName).toLowerCase()
+      const allowedTypes = envConfig.ALLOWED_FILE_TYPES.split(",").map((t: string) => t.trim())
+      throw new Error(`File type '${fileExtension}' (${newFile.mimeType}) is not allowed. Allowed types: ${allowedTypes.join(', ')}`)
+    }
+
+    const fileName = this.generateFileName(newFile.originalName)
+    await this.saveFile(newFile.buffer, fileName)
+
+    const checksum = crypto.createHash("md5").update(newFile.buffer).digest("hex")
+    const nextVersion = (current.metadata?.version ?? 1) + 1
+
+    await this.createFileVersion(fileId, {
+      version: nextVersion,
+      filePath: path.join("uploads", fileName),
+      fileSize: newFile.buffer.length,
+      uploadedBy: user.id,
+      changes,
+      checksum,
+    })
+
+    await db.collection("files").updateOne(
+      { _id: new ObjectId(fileId) },
+      {
+        $set: {
+          fileName,
+          originalName: newFile.originalName,
+          fileType: newFile.mimeType,
+          fileSize: newFile.buffer.length,
+          filePath: path.join("uploads", fileName),
+          updatedAt: new Date(),
+          "metadata.checksum": checksum,
+          "metadata.version": nextVersion,
+        },
+      },
+    )
+
+    await AuditOperations.createLog({
+      userId: new ObjectId(user.id),
+      action: "version_upload",
+      resourceType: "file",
+      resourceId: new ObjectId(fileId),
+      details: { version: nextVersion, fileName: newFile.originalName },
+      status: "success",
+    })
+
+    return { version: nextVersion }
+  }
+
+  static async listFileVersions(fileId: string, limit = 50) {
+    const db = await this.getDb()
+    return await db
+      .collection("file_versions")
+      .find({ fileId: new ObjectId(fileId) })
+      .sort({ version: -1 })
+      .limit(limit)
+      .toArray()
+  }
+
+  static async rollbackToVersion(fileId: string, version: number, user: AuthUser) {
+    const db = await this.getDb()
+    const target = await db.collection("file_versions").findOne({ fileId: new ObjectId(fileId), version })
+    if (!target) {
+      throw new Error("Target version not found")
+    }
+
+    const current = await this.getFileById(fileId)
+    if (!current) {
+      throw new Error("File not found")
+    }
+
+    const buffer = await this.getFileBuffer(path.basename(target.filePath))
+    const newFileName = this.generateFileName(current.originalName)
+    await this.saveFile(buffer, newFileName)
+
+    const checksum = crypto.createHash("md5").update(buffer).digest("hex")
+    const nextVersion = (current.metadata?.version ?? 1) + 1
+
+    await this.createFileVersion(fileId, {
+      version: nextVersion,
+      filePath: path.join("uploads", newFileName),
+      fileSize: buffer.length,
+      uploadedBy: user.id,
+      changes: `rollback to ${version}`,
+      checksum,
+    })
+
+    await db.collection("files").updateOne(
+      { _id: new ObjectId(fileId) },
+      {
+        $set: {
+          fileName: newFileName,
+          filePath: path.join("uploads", newFileName),
+          fileSize: buffer.length,
+          updatedAt: new Date(),
+          "metadata.checksum": checksum,
+          "metadata.version": nextVersion,
+        },
+      },
+    )
+
+    await AuditOperations.createLog({
+      userId: new ObjectId(user.id),
+      action: "version_rollback",
+      resourceType: "file",
+      resourceId: new ObjectId(fileId),
+      details: { toVersion: version, newVersion: nextVersion },
+      status: "success",
+    })
+
+    return { version: nextVersion }
   }
 }

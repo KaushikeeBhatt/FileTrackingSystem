@@ -1,5 +1,7 @@
 import { MongoClient, Db } from "mongodb"
 import { validateEnvironment } from "./env-validation"
+import { checkRateLimit, defaultKeyGenerator, getRateLimitConfig, RateLimitType, roleBasedKeyGenerator } from "./rate-limiter";
+import { NextRequest, NextResponse } from "next/server";
 
 declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined
@@ -62,5 +64,80 @@ export async function closeDatabaseConnection(): Promise<void> {
     throw error;
   } finally {
     global._mongoClientPromise = undefined;
+  }
+}
+// ... existing imports ...
+
+export async function withRateLimit(
+  handler: Function,
+  limitType: RateLimitType = "GENERAL",
+  useRoleBasedLimits = false,
+) {
+  return async (request: NextRequest, ...args: any[]) => {
+    
+      // Add CORS headers
+      const corsHeaders = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      }
+    try{
+      // Handle preflight requests
+      if (request.method === 'OPTIONS') {
+        return new NextResponse(null, { headers: corsHeaders })
+      }
+
+      const user = (request as any).user
+      const role = useRoleBasedLimits && user?.role
+      const config = getRateLimitConfig(limitType, role)
+
+      const keyGenerator = useRoleBasedLimits ? roleBasedKeyGenerator : defaultKeyGenerator
+      const { allowed, remaining, resetTime } = await checkRateLimit(request, config, keyGenerator)
+
+      if (!allowed) {
+        const response = NextResponse.json(
+          {
+            success: false,
+            error: "Rate limit exceeded",
+            retryAfter: Math.ceil((resetTime - Date.now()) / 1000),
+          },
+          { 
+            status: 429,
+            headers: corsHeaders
+          }
+        )
+
+        response.headers.set("Retry-After", Math.ceil((resetTime - Date.now()) / 1000).toString())
+        response.headers.set("X-RateLimit-Limit", config.maxRequests.toString())
+        response.headers.set("X-RateLimit-Remaining", remaining.toString())
+        response.headers.set("X-RateLimit-Reset", Math.ceil(resetTime / 1000).toString())
+
+        return response
+      }
+
+      const response = await handler(request, ...args)
+
+      if (response instanceof NextResponse) {
+        // Add rate limit headers to all responses
+        response.headers.set("X-RateLimit-Limit", config.maxRequests.toString())
+        response.headers.set("X-RateLimit-Remaining", (remaining - 1).toString())
+        response.headers.set("X-RateLimit-Reset", Math.ceil(resetTime / 1000).toString())
+        
+        // Add CORS headers
+        Object.entries(corsHeaders).forEach(([key, value]) => {
+          response.headers.set(key, value)
+        })
+
+        return response
+      }
+
+      return response
+    } catch (error) {
+      console.error("Rate limit middleware error:", error);
+      return NextResponse.json(
+        { success: false, error: "Internal server error" },
+        { status: 500, headers: corsHeaders as Record<string, string> }
+      );
+    }
   }
 }

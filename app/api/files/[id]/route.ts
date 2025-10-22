@@ -2,10 +2,10 @@ import { type NextRequest, NextResponse } from "next/server"
 import { withAuth } from "@/lib/middleware/auth"
 import { FileOperations } from "@/lib/file-operations"
 
-async function deleteHandler(request: NextRequest, { params }: { params: { id: string } }) {
+async function deleteHandler(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = (request as any).user
-    const fileId = params.id
+    const fileId = (await params).id
 
     const success = await FileOperations.deleteFile(fileId, user.id)
 

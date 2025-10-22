@@ -7,12 +7,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Download, Trash2, CheckCircle, MoreHorizontal, File, Calendar, User, Filter } from "lucide-react"
+import { Download, Trash2, CheckCircle, MoreHorizontal, File, Calendar, User, Filter, Share2, History, Upload, ArrowLeftRight } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { authFetch } from "@/lib/auth-fetch"
 import { formatDistanceToNow } from "date-fns"
 import { AdvancedSearch } from "./advanced-search"
 import { useToast } from "@/hooks/use-toast"
+import { ShareFileDialog } from "./share-file-dialog"
+import { VersionHistoryDialog } from "./version-history-dialog"
+import { UploadVersionDialog } from "./upload-version-dialog"
+import { VersionComparisonDialog } from "./version-comparison-dialog"
 
 interface FileRecord {
   _id: string
@@ -30,6 +34,7 @@ interface FileRecord {
   description?: string
   status: "active" | "archived" | "pending_approval" | "rejected"
   createdAt: string
+  isShared?: boolean
   metadata: {
     version: number
     accessCount: number
@@ -47,6 +52,10 @@ export function FileList({ refreshTrigger }: FileListProps) {
   const [loading, setLoading] = useState(true)
   const [searchResults, setSearchResults] = useState<any>({ results: [], total: 0 })
   const [currentFilters, setCurrentFilters] = useState<any>({})
+  const [fileToShare, setFileToShare] = useState<FileRecord | null>(null)
+  const [fileForVersionHistory, setFileForVersionHistory] = useState<FileRecord | null>(null)
+  const [fileForVersionUpload, setFileForVersionUpload] = useState<FileRecord | null>(null)
+  const [fileForVersionComparison, setFileForVersionComparison] = useState<FileRecord | null>(null)
 
   const performAdvancedSearch = async (filters: any) => {
     try {
@@ -160,7 +169,30 @@ export function FileList({ refreshTrigger }: FileListProps) {
       showToast("An unexpected error occurred while approving the file.", "error")
     }
   }
+  const handleShare = (file: FileRecord) => {
+    setFileToShare(file)
+  }
 
+  const handleViewVersionHistory = (file: FileRecord) => {
+    setFileForVersionHistory(file)
+  }
+
+  const handleUploadNewVersion = (file: FileRecord) => {
+    setFileForVersionUpload(file)
+  }
+
+  const handleCompareVersions = (file: FileRecord) => {
+    setFileForVersionComparison(file)
+  }
+
+  const handleVersionChange = () => {
+    // Refresh the file list when versions change
+    if (Object.keys(currentFilters).length === 0) {
+      fetchFiles()
+    } else {
+      performAdvancedSearch(currentFilters)
+    }
+  }
   const getStatusBadge = (status: string) => {
     const variants = {
       active: "default",
@@ -236,6 +268,7 @@ export function FileList({ refreshTrigger }: FileListProps) {
                       <TableRow>
                         <TableHead>File Name</TableHead>
                         <TableHead>Category</TableHead>
+                        <TableHead>Version</TableHead>
                         <TableHead>Size</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Uploaded By</TableHead>
@@ -272,6 +305,20 @@ export function FileList({ refreshTrigger }: FileListProps) {
                           <TableCell>
                             <Badge variant="secondary">{file.category}</Badge>
                           </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <Badge variant="outline" className="text-xs">
+                                v{file.metadata.version}
+                              </Badge>
+                              <button
+                                onClick={() => handleViewVersionHistory(file)}
+                                className="text-blue-600 hover:text-blue-800 text-xs underline ml-1"
+                                title="View version history"
+                              >
+                                history
+                              </button>
+                            </div>
+                          </TableCell>
                           <TableCell>{formatFileSize(file.fileSize)}</TableCell>
                           <TableCell>{getStatusBadge(file.status)}</TableCell>
                           <TableCell>
@@ -280,6 +327,11 @@ export function FileList({ refreshTrigger }: FileListProps) {
                               <div>
                                 <p className="text-sm font-medium">{file.uploadedBy.name}</p>
                                 <p className="text-xs text-slate-500">{file.department}</p>
+                                {file.isShared && (
+                                  <Badge variant="secondary" className="mt-1">
+                                    Shared
+                                  </Badge>
+                                )}
                               </div>
                             </div>
                           </TableCell>
@@ -308,6 +360,26 @@ export function FileList({ refreshTrigger }: FileListProps) {
                                   <Download className="mr-2 h-4 w-4" />
                                   Download
                                 </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleShare(file)}>
+                                  <Share2 className="mr-2 h-4 w-4" />
+                                  Share
+                                </DropdownMenuItem>
+                                
+                                {/* Version Control Actions */}
+                                <DropdownMenuItem onClick={() => handleViewVersionHistory(file)}>
+                                  <History className="mr-2 h-4 w-4" />
+                                  Version History
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleUploadNewVersion(file)}>
+                                  <Upload className="mr-2 h-4 w-4" />
+                                  Upload New Version
+                                </DropdownMenuItem>
+                                {file.metadata.version > 1 && (
+                                  <DropdownMenuItem onClick={() => handleCompareVersions(file)}>
+                                    <ArrowLeftRight className="mr-2 h-4 w-4" />
+                                    Compare Versions
+                                  </DropdownMenuItem>
+                                )}
 
                                 {(user?.role === "admin" || user?.role === "manager") &&
                                   file.status === "pending_approval" && (
@@ -340,6 +412,46 @@ export function FileList({ refreshTrigger }: FileListProps) {
           <AdvancedSearch onSearch={performAdvancedSearch} onReset={resetSearch} />
         </TabsContent>
       </Tabs>
+
+      {fileToShare && (
+        <ShareFileDialog
+          file={fileToShare}
+          onClose={() => setFileToShare(null)}
+          onShareSuccess={() => {
+            showToast("File shared successfully", "success")
+            setFileToShare(null)
+          }}
+        />
+      )}
+
+      {fileForVersionHistory && (
+        <VersionHistoryDialog
+          file={fileForVersionHistory}
+          isOpen={!!fileForVersionHistory}
+          onClose={() => setFileForVersionHistory(null)}
+          onVersionChange={handleVersionChange}
+        />
+      )}
+
+      {fileForVersionUpload && (
+        <UploadVersionDialog
+          file={fileForVersionUpload}
+          isOpen={!!fileForVersionUpload}
+          onClose={() => setFileForVersionUpload(null)}
+          onVersionUploaded={() => {
+            handleVersionChange()
+            showToast("New version uploaded successfully", "success")
+          }}
+        />
+      )}
+
+      {fileForVersionComparison && (
+        <VersionComparisonDialog
+          file={fileForVersionComparison}
+          isOpen={!!fileForVersionComparison}
+          onClose={() => setFileForVersionComparison(null)}
+        />
+      )}
     </div>
   )
 }

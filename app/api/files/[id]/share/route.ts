@@ -3,10 +3,10 @@ import { withAuth } from "@/lib/middleware/auth"
 import { FileSharingOperations } from "@/lib/file-sharing-operations"
 import { rateLimit } from "@/lib/middleware/rate-limit"
 
-async function shareFileHandler(request: NextRequest, { params }: { params: { id: string } }) {
+async function shareFileHandler(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = (request as any).user
-    const fileId = params.id
+    const fileId = (await params).id
     const { sharedWith, permissions, expiresAt } = await request.json()
 
     const result = await FileSharingOperations.shareFile(
@@ -24,10 +24,10 @@ async function shareFileHandler(request: NextRequest, { params }: { params: { id
   }
 }
 
-async function getFileSharesHandler(request: NextRequest, { params }: { params: { id: string } }) {
+async function getFileSharesHandler(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = (request as any).user
-    const fileId = params.id
+    const fileId = (await params).id
 
     const permissions = await FileSharingOperations.getFilePermissions(fileId, user.id)
 

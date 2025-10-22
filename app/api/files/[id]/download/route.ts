@@ -5,10 +5,10 @@ import { getFileById, createAuditLog, updateFileAccess } from "@/lib/database-op
 import { ObjectId } from "mongodb"
 import { rateLimit } from "@/lib/middleware/rate-limit"
 
-async function downloadHandler(request: NextRequest, { params }: { params: { id: string } }) {
+async function downloadHandler(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = (request as any).user
-    const fileId = params.id
+    const fileId = (await params).id
 
     // Get file record
     const file = await getFileById(new ObjectId(fileId))

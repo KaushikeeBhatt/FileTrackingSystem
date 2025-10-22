@@ -9,7 +9,7 @@ services:
         - JWT_SECRET=dev-jwt-secret-key-change-in-production
         - BASE_URL=http://localhost:3000
         - MAX_FILE_SIZE=104857600 # 100MB
-        - ALLOWED_FILE_TYPES="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/bmp,image/svg+xml,image/tiff,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,application/rtf,video/mp4,video/mpeg,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/webm,video/3gpp,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,application/zip,application/x-rar-compressed,application/x-7z-compressed,application/x-tar,application/gzip,application/octet-stream"
+        - ALLOWED_FILE_TYPES="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/bmp,image/svg+xml,image/tiff,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,application/rtf,video/mp4,video/mpeg,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/webm,video/3gpp,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,application/zip,application/x-rar-compressed,application/x-7z-compressed,application/x-tar,application/gzip,application/octet-stream, document/pdf"
     working_dir: /app
     command: pnpm run dev
     ports:

@@ -2,9 +2,9 @@ import { type NextRequest, NextResponse } from "next/server"
 import { withAuth } from "@/lib/middleware/auth"
 import { AdminOperations } from "@/lib/admin-operations"
 
-async function updateUserHandler(request: NextRequest, { params }: { params: { id: string } }) {
+async function updateUserHandler(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const userId = params.id
+    const userId = (await params).id
     const updates = await request.json()
 
     const success = await AdminOperations.updateUser(userId, updates)
@@ -20,9 +20,9 @@ async function updateUserHandler(request: NextRequest, { params }: { params: { i
   }
 }
 
-async function deleteUserHandler(request: NextRequest, { params }: { params: { id: string } }) {
+async function deleteUserHandler(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const userId = params.id
+    const userId = (await params).id
 
     const success = await AdminOperations.deleteUser(userId)
 

@@ -3,10 +3,11 @@ import { withAuth } from "@/lib/middleware/auth"
 import { deleteNotification } from "@/lib/notification-operations"
 import { ObjectId } from "mongodb"
 
-async function deleteNotificationHandler(request: NextRequest, { params }: { params: { id: string } }) {
+async function deleteNotificationHandler(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = (request as any).user
-    const result = await deleteNotification(new ObjectId(params.id), new ObjectId(user.id))
+    const { id } = await params
+    const result = await deleteNotification(new ObjectId(id), new ObjectId(user.id))
 
     return NextResponse.json({ success: result.success })
   } catch (error) {

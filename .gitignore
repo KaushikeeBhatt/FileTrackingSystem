@@ -56,3 +56,6 @@ Thumbs.db
 *.sublime-workspace
 .pnpm-store
 
+.recentlog.txt
+.PROJECT_GUIDE.md
+

@@ -20,7 +20,10 @@ async function filesHandler(request: NextRequest) {
 
     // Role-based filtering & status adjustments
     if (user.role === "user") {
-      filters.uploadedBy = new ObjectId(user.id)
+      filters.$or = [
+        { uploadedBy: new ObjectId(user.id) },
+        { "permissions.sharedWith.userId": new ObjectId(user.id) },
+      ]
     } else if ((user.role === "admin" || user.role === "manager") && !status) {
       // For admins/managers, if no status is specified, show active and pending files
       filters.$or = [{ status: "active" }, { status: "pending_approval" }]
@@ -59,6 +62,11 @@ async function filesHandler(request: NextRequest) {
             $unwind: "$uploadedBy",
           },
           {
+            $addFields: {
+              isShared: { $ne: ["$uploadedBy._id", new ObjectId(user.id)] },
+            },
+          },
+          {
             $project: {
               fileName: 1,
               originalName: 1,
@@ -71,6 +79,7 @@ async function filesHandler(request: NextRequest) {
               status: 1,
               createdAt: 1,
               metadata: 1,
+              isShared: 1,
               "uploadedBy.name": 1,
               "uploadedBy.email": 1,
             },

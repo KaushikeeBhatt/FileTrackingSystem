@@ -114,7 +114,8 @@ export function AdminDashboard() {
 
       if (response.ok) {
         const data = await response.json()
-        setUsers(data.users)
+        //setUsers(data.users)
+        setUsers(Array.isArray(data.users) ? data.users : [])
       }
     } catch (error) {
       console.error("Failed to fetch users:", error)
@@ -480,7 +481,7 @@ export function AdminDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {users.map((userData) => (
+                    {Array.isArray(users) && users.map((userData) => (
                       <TableRow key={userData._id}>
                         <TableCell>
                           <div>
