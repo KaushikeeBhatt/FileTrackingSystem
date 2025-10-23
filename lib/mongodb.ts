@@ -31,12 +31,6 @@ const isTestEnvironment = process.env.NODE_ENV === 'test';
 // Only create a global connection in non-test and non-build environments
 if (!global._mongoClientPromise && !isTestEnvironment && !isBuildTime) {
   const clientOptions = {
-    tls: true,
-    tlsAllowInvalidCertificates: false,
-    tlsAllowInvalidHostnames: false,
-    // Force TLS 1.2 instead of 1.3 to work around Alpine OpenSSL issues
-    minVersion: 'TLSv1.2' as const,
-    maxVersion: 'TLSv1.2' as const,
     serverSelectionTimeoutMS: 10000,
     connectTimeoutMS: 10000,
     socketTimeoutMS: 45000,
@@ -45,6 +39,8 @@ if (!global._mongoClientPromise && !isTestEnvironment && !isBuildTime) {
     retryWrites: true,
     retryReads: true,
     w: 'majority' as const,
+    // Let MongoDB driver handle TLS automatically from connection string
+    // This is the most compatible approach for Alpine + MongoDB Atlas
   };
 
   const client = new MongoClient(envConfig.MONGODB_URI, clientOptions);
