@@ -1,10 +1,12 @@
 # Multi-stage build for production
-FROM node:18-alpine AS base
+FROM node:18-slim AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-# Install OpenSSL compatibility libraries for MongoDB Atlas TLS
-RUN apk add --no-cache libc6-compat openssl ca-certificates
+# Install CA certificates for MongoDB Atlas TLS
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
@@ -34,8 +36,10 @@ RUN corepack enable pnpm && pnpm run build
 FROM base AS runner
 WORKDIR /app
 
-# Install OpenSSL and CA certificates for MongoDB Atlas TLS at runtime
-RUN apk add --no-cache openssl ca-certificates
+# Install CA certificates for MongoDB Atlas TLS
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
