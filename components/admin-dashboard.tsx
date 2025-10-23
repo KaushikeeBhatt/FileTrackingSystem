@@ -78,6 +78,7 @@ interface UserData {
 export function AdminDashboard() {
   const { user } = useAuth()
   const [stats, setStats] = useState<SystemStats | null>(null)
+  const [analytics, setAnalytics] = useState<any>(null)
   const [users, setUsers] = useState<UserData[]>([])
   const [pendingFiles, setPendingFiles] = useState<any[]>([])
   const [selectedFiles, setSelectedFiles] = useState<string[]>([])
@@ -135,10 +136,23 @@ export function AdminDashboard() {
     }
   }
 
+  const fetchAnalytics = async () => {
+    try {
+      const response = await authFetch("/api/admin/analytics?days=7")
+
+      if (response.ok) {
+        const data = await response.json()
+        setAnalytics(data.analytics)
+      }
+    } catch (error) {
+      console.error("Failed to fetch analytics:", error)
+    }
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
-      await Promise.all([fetchSystemStats(), fetchUsers(), fetchPendingFiles()])
+      await Promise.all([fetchSystemStats(), fetchUsers(), fetchPendingFiles(), fetchAnalytics()])
       setLoading(false)
     }
 
@@ -618,7 +632,7 @@ export function AdminDashboard() {
 
         <TabsContent value="analytics">
           <div className="space-y-6">
-            {stats && (
+            {stats && analytics && (
               <>
                 {/* System Overview Charts */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -639,28 +653,11 @@ export function AdminDashboard() {
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
                             <Pie
-                              data={[
-                                {
-                                  name: "Documents",
-                                  value: Math.floor(stats.totalFiles * 0.4),
-                                  fill: "var(--color-documents)",
-                                },
-                                {
-                                  name: "Images",
-                                  value: Math.floor(stats.totalFiles * 0.3),
-                                  fill: "var(--color-images)",
-                                },
-                                {
-                                  name: "Videos",
-                                  value: Math.floor(stats.totalFiles * 0.2),
-                                  fill: "var(--color-videos)",
-                                },
-                                {
-                                  name: "Other",
-                                  value: Math.floor(stats.totalFiles * 0.1),
-                                  fill: "var(--color-other)",
-                                },
-                              ]}
+                              data={analytics.fileTypeStats.map((type: any, idx: number) => ({
+                                name: type._id || "Other",
+                                value: type.count,
+                                fill: `var(--color-${["documents", "images", "videos", "other"][idx % 4]})`,
+                              }))}
                               cx="50%"
                               cy="50%"
                               outerRadius={80}
@@ -682,28 +679,22 @@ export function AdminDashboard() {
                       <ChartContainer
                         config={{
                           uploads: { label: "Uploads", color: "hsl(var(--chart-1))" },
-                          downloads: { label: "Downloads", color: "hsl(var(--chart-2))" },
+                          actions: { label: "Actions", color: "hsl(var(--chart-2))" },
                         }}
                         className="h-[300px]"
                       >
                         <ResponsiveContainer width="100%" height="100%">
                           <BarChart
-                            data={[
-                              { day: "Mon", uploads: 12, downloads: 45 },
-                              { day: "Tue", uploads: 19, downloads: 52 },
-                              { day: "Wed", uploads: 15, downloads: 38 },
-                              { day: "Thu", uploads: 22, downloads: 61 },
-                              { day: "Fri", uploads: 28, downloads: 73 },
-                              { day: "Sat", uploads: 8, downloads: 25 },
-                              { day: "Sun", uploads: 5, downloads: 18 },
-                            ]}
+                            data={analytics.uploadTrends.map((trend: any) => ({
+                              day: new Date(trend._id).toLocaleDateString('en-US', { weekday: 'short' }),
+                              uploads: trend.uploads,
+                            }))}
                           >
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="day" />
                             <YAxis />
                             <ChartTooltip content={<ChartTooltipContent />} />
                             <Bar dataKey="uploads" fill="var(--color-uploads)" />
-                            <Bar dataKey="downloads" fill="var(--color-downloads)" />
                           </BarChart>
                         </ResponsiveContainer>
                       </ChartContainer>
@@ -714,28 +705,24 @@ export function AdminDashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Storage Usage Trend</CardTitle>
+                      <CardTitle>Storage Usage Trend (Last 7 Days)</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <ChartContainer
                         config={{
-                          storage: { label: "Storage (GB)", color: "hsl(var(--chart-3))" },
+                          storage: { label: "Storage (MB)", color: "hsl(var(--chart-3))" },
                         }}
                         className="h-[300px]"
                       >
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart
-                            data={[
-                              { month: "Jan", storage: 2.1 },
-                              { month: "Feb", storage: 2.8 },
-                              { month: "Mar", storage: 3.2 },
-                              { month: "Apr", storage: 4.1 },
-                              { month: "May", storage: 4.9 },
-                              { month: "Jun", storage: 5.7 },
-                            ]}
+                            data={analytics.uploadTrends.map((trend: any) => ({
+                              date: new Date(trend._id).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                              storage: (trend.totalSize / (1024 * 1024)).toFixed(2),
+                            }))}
                           >
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="month" />
+                            <XAxis dataKey="date" />
                             <YAxis />
                             <ChartTooltip content={<ChartTooltipContent />} />
                             <Line type="monotone" dataKey="storage" stroke="var(--color-storage)" strokeWidth={2} />

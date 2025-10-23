@@ -29,4 +29,4 @@ async function auditLogsHandler(request: NextRequest) {
   }
 }
 
-export const GET = withAuth(auditLogsHandler, ["admin", "manager"])
+export const GET = withAuth(auditLogsHandler, ["admin", "manager", "user"])

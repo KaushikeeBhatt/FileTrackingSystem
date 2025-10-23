@@ -413,17 +413,24 @@ export function AuditTrail() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            {log.success ? (
-                              <Badge variant="default" className="bg-green-100 text-green-800">
-                                <CheckCircle className="mr-1 h-3 w-3" />
-                                Success
-                              </Badge>
-                            ) : (
-                              <Badge variant="destructive">
-                                <XCircle className="mr-1 h-3 w-3" />
-                                Failed
-                              </Badge>
-                            )}
+                            <div className="space-y-1">
+                              {log.success ? (
+                                <Badge variant="default" className="bg-green-100 text-green-800">
+                                  <CheckCircle className="mr-1 h-3 w-3" />
+                                  Success
+                                </Badge>
+                              ) : (
+                                <div>
+                                  <Badge variant="destructive">
+                                    <XCircle className="mr-1 h-3 w-3" />
+                                    Failed
+                                  </Badge>
+                                  {log.errorMessage && (
+                                    <p className="text-xs text-red-600 mt-1">{log.errorMessage}</p>
+                                  )}
+                                </div>
+                              )}
+                            </div>
                           </TableCell>
                           <TableCell>
                             <div className="text-sm">
