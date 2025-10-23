@@ -18,6 +18,14 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
+ENV DOCKER_BUILD true
+
+# Add build-time environment variables (dummy values for build)
+ENV MONGODB_URI=mongodb://localhost:27017/file-tracking
+ENV JWT_SECRET=build-time-secret-key-minimum-32-characters-required
+ENV BASE_URL=http://localhost:3000
+ENV MAX_FILE_SIZE=52428800
+ENV ALLOWED_FILE_TYPES=application/pdf,image/jpeg,image/png
 
 RUN corepack enable pnpm && pnpm run build
 
