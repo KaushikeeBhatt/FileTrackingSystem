@@ -7,8 +7,8 @@ declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined
 }
 
-// Validate environment variables (skip during build phase)
-const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build' || process.env.DOCKER_BUILD === 'true';
+// Validate environment variables (skip during build phase only)
+const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
 const env = isBuildTime ? { isValid: true, config: null, errors: [] } : validateEnvironment();
 
 if (!isBuildTime && (!env.isValid || !env.config)) {
@@ -30,7 +30,21 @@ const isTestEnvironment = process.env.NODE_ENV === 'test';
 
 // Only create a global connection in non-test and non-build environments
 if (!global._mongoClientPromise && !isTestEnvironment && !isBuildTime) {
-  const client = new MongoClient(envConfig.MONGODB_URI);
+  const clientOptions = {
+    tls: true,
+    tlsAllowInvalidCertificates: false,
+    tlsAllowInvalidHostnames: false,
+    serverSelectionTimeoutMS: 10000,
+    connectTimeoutMS: 10000,
+    socketTimeoutMS: 45000,
+    maxPoolSize: 10,
+    minPoolSize: 2,
+    retryWrites: true,
+    retryReads: true,
+    w: 'majority' as const,
+  };
+
+  const client = new MongoClient(envConfig.MONGODB_URI, clientOptions);
   global._mongoClientPromise = client.connect()
     .then(connectedClient => {
       console.log("MongoDB connected successfully");
@@ -38,6 +52,8 @@ if (!global._mongoClientPromise && !isTestEnvironment && !isBuildTime) {
     })
     .catch(error => {
       console.error("MongoDB connection error:", error);
+      // Clear the promise so it can be retried
+      global._mongoClientPromise = undefined;
       throw error;
     });
 }
