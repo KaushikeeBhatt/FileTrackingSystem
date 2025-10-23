@@ -24,7 +24,8 @@ describe("/api/health", () => {
 
   describe("GET /api/health", () => {
     it("should return health status", async () => {
-      const response = await healthHandler();
+      const req = new NextRequest("http://localhost:3000/api/health?db=true");
+      const response = await healthHandler(req as any);
       
       expect(response.status).toBe(200);
       
@@ -36,9 +37,9 @@ describe("/api/health", () => {
     });
 
     it("should include database connection status", async () => {
-      const req = new NextRequest("http://localhost:3000/api/health");
+      const req = new NextRequest("http://localhost:3000/api/health?db=true");
 
-      const response = await healthHandler();
+      const response = await healthHandler(req as any);
       
       expect(response.status).toBe(200);
       
@@ -49,9 +50,9 @@ describe("/api/health", () => {
     });
 
     it("should include system information", async () => {
-      const req = new NextRequest("http://localhost:3000/api/health");
+      const req = new NextRequest("http://localhost:3000/api/health?db=true");
 
-      const response = await healthHandler();
+      const response = await healthHandler(req as any);
       
       expect(response.status).toBe(200);
       
