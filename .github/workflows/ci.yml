@@ -53,7 +53,7 @@ jobs:
     # - name: Run unit and integration tests
     #   run: npm test && npm run test:integration
     - name: Run unit tests
-      run: pnpm test -- --coverage=false
+      run: pnpm test --coverage=false
       env:
         CI: true
         SWC_BINARY_PATH: /usr/local/lib/node_modules/@swc/core-linux-x64-gnu/swc.linux-x64-gnu.node
