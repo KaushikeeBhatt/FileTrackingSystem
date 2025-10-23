@@ -16,15 +16,13 @@ if (!isBuildTime && (!env.isValid || !env.config)) {
 }
 
 // Use dummy config during build time
-const { config: envConfig } = env.config ? env : {
-  config: {
-    MONGODB_URI: 'mongodb://localhost:27017/build-placeholder',
-    JWT_SECRET: 'build-time-secret-minimum-32-chars-required',
-    NODE_ENV: 'production' as const,
-    BASE_URL: 'http://localhost:3000',
-    MAX_FILE_SIZE: 52428800,
-    ALLOWED_FILE_TYPES: 'application/pdf,image/jpeg,image/png'
-  }
+const envConfig = env.config ?? {
+  MONGODB_URI: 'mongodb://localhost:27017/build-placeholder',
+  JWT_SECRET: 'build-time-secret-minimum-32-chars-required',
+  NODE_ENV: 'production' as const,
+  BASE_URL: 'http://localhost:3000',
+  MAX_FILE_SIZE: 52428800,
+  ALLOWED_FILE_TYPES: 'application/pdf,image/jpeg,image/png'
 };
 
 // In test environment, we want to create a new connection for each test
