@@ -7,6 +7,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?style=for-the-badge&logo=typescript&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-7.0-green?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Enabled-blue?style=for-the-badge&logo=docker&logoColor=white)
+![Tests](https://img.shields.io/badge/Tests-Passing-success?style=for-the-badge&logo=github&logoColor=white)
 
 **A modern, secure, and scalable file management solution built for enterprise environments**
 
