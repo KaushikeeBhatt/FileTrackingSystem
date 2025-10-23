@@ -1,9 +1,27 @@
 import { NextResponse } from "next/server"
 import { getDatabase } from "@/lib/mongodb"
 
-export async function GET() {
+// Lightweight health check - returns 200 immediately without DB check
+// Use /api/health/db for full database health check
+export async function GET(request: Request) {
+  const url = new URL(request.url)
+  const checkDb = url.searchParams.get("db") === "true"
+
+  // Quick health check for deployment readiness
+  if (!checkDb) {
+    return NextResponse.json(
+      {
+        status: "healthy",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || "development",
+      },
+      { status: 200 },
+    )
+  }
+
+  // Full health check with database
   try {
-    // Check database connection
     const db = await getDatabase()
     await db.admin().ping()
 

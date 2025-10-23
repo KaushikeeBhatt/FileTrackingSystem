@@ -1,5 +1,6 @@
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { FileText, Users, Shield, Search, Bell, BarChart3 } from "lucide-react"
 import Link from "next/link"
 
@@ -15,6 +16,7 @@ export default function HomePage() {
               <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Digital File Tracking</h1>
             </div>
             <div className="flex items-center space-x-4">
+              <ThemeToggle />
               <Button variant="outline" asChild>
                 <Link href="/login">Sign In</Link>
               </Button>

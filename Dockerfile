@@ -61,7 +61,8 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+# Use Render's PORT env var if provided, otherwise default to 3000
+ENV PORT=${PORT:-3000}
+ENV HOSTNAME="0.0.0.0"
 
 CMD ["node", "server.js"]

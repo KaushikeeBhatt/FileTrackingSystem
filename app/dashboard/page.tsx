@@ -8,6 +8,7 @@ import { FileList } from "@/components/file-list"
 import { AuditTrail } from "@/components/audit-trail"
 import { AdminDashboard } from "@/components/admin-dashboard"
 import { NotificationCenter } from "@/components/notification-center"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -57,6 +58,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center space-x-4">
               <NotificationCenter />
+              <ThemeToggle />
               <div className="flex items-center space-x-2">
                 <User className="h-4 w-4" />
                 <span className="text-sm font-medium">{user.name}</span>
