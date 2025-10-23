@@ -3,7 +3,8 @@ FROM node:18-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
+# Install OpenSSL compatibility libraries for MongoDB Atlas TLS
+RUN apk add --no-cache libc6-compat openssl ca-certificates
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
@@ -32,6 +33,9 @@ RUN corepack enable pnpm && pnpm run build
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
+
+# Install OpenSSL and CA certificates for MongoDB Atlas TLS at runtime
+RUN apk add --no-cache openssl ca-certificates
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1

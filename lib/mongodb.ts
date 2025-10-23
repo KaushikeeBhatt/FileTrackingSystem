@@ -34,6 +34,9 @@ if (!global._mongoClientPromise && !isTestEnvironment && !isBuildTime) {
     tls: true,
     tlsAllowInvalidCertificates: false,
     tlsAllowInvalidHostnames: false,
+    // Force TLS 1.2 instead of 1.3 to work around Alpine OpenSSL issues
+    minVersion: 'TLSv1.2' as const,
+    maxVersion: 'TLSv1.2' as const,
     serverSelectionTimeoutMS: 10000,
     connectTimeoutMS: 10000,
     socketTimeoutMS: 45000,
