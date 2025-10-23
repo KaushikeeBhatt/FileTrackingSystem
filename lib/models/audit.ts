@@ -4,6 +4,7 @@ export type AuditAction =
   | 'create' | 'update' | 'delete' 
   | 'login' | 'logout' | 'download' | 'upload' | 'share'
   | 'view' | 'edit' | 'approve' | 'reject'
+  | 'version_upload' | 'version_download' | 'version_rollback'
 
 export type ResourceType = 'file' | 'user' | 'folder' | 'permission' | 'system'
 

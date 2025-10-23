@@ -17,14 +17,14 @@ import { ShareFileDialog } from "./share-file-dialog"
 import { VersionHistoryDialog } from "./version-history-dialog"
 import { UploadVersionDialog } from "./upload-version-dialog"
 import { VersionComparisonDialog } from "./version-comparison-dialog"
+import type { FileRecord as SharedFileRecord } from "@/lib/models"
 
-interface FileRecord {
+// Extend the shared FileRecord type with UI-specific properties
+type FileRecord = Omit<SharedFileRecord, '_id' | 'uploadedBy' | 'sharedWith' | 'parentFolder' | 'metadata' | 'status'> & {
   _id: string
-  fileName: string
-  originalName: string
-  fileType: string
-  fileSize: number
+  fileSize: number  // Alias for size
   uploadedBy: {
+    _id: string
     name: string
     email: string
   }
@@ -32,12 +32,16 @@ interface FileRecord {
   category: string
   tags: string[]
   description?: string
-  status: "active" | "archived" | "pending_approval" | "rejected"
+  status: 'active' | 'archived' | 'pending_approval' | 'rejected' | 'deleted'
   createdAt: string
   isShared?: boolean
   metadata: {
-    version: number
+    description?: string
+    tags?: string[]
     accessCount: number
+    lastAccessedAt?: Date
+    version: number
+    checksum: string
   }
 }
 

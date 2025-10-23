@@ -9,8 +9,8 @@ async function adminUsersHandler(request: NextRequest) {
     const limit = Number.parseInt(searchParams.get("limit") || "50")
     const skip = Number.parseInt(searchParams.get("skip") || "0")
 
-    const users = await AdminOperations.getAllUsers(limit, skip)
-    return NextResponse.json({ success: true, users })
+    const result = await AdminOperations.getAllUsers(limit, skip)
+    return NextResponse.json({ success: true, users: result.users, total: result.total })
   } catch (error) {
     console.error("Admin users error:", error)
     return NextResponse.json({ success: false, error: "Failed to fetch users" }, { status: 500 })

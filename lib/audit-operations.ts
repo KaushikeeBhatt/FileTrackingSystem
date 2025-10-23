@@ -1,6 +1,27 @@
 import { getDatabase } from "./mongodb"
 import { ObjectId, type Document } from "mongodb"
 import type { AuditLog } from "./models/audit"
+import type { NextRequest } from "next/server"
+
+// Helper function to extract IP address from request
+export function getClientIp(request?: NextRequest | any): string {
+  if (!request) return "unknown"
+  
+  // Try different methods to get the IP
+  const forwarded = request.headers?.get?.("x-forwarded-for") || request.headers?.["x-forwarded-for"]
+  if (forwarded) {
+    const ips = forwarded.split(",")
+    return ips[0].trim()
+  }
+  
+  const realIp = request.headers?.get?.("x-real-ip") || request.headers?.["x-real-ip"]
+  if (realIp) return realIp
+  
+  const cfConnectingIp = request.headers?.get?.("cf-connecting-ip") || request.headers?.["cf-connecting-ip"]
+  if (cfConnectingIp) return cfConnectingIp
+  
+  return request.ip || "127.0.0.1"
+}
 
 export interface AuditFilters {
   userId?: string
@@ -27,13 +48,15 @@ export class AuditOperations {
     return await getDatabase()
   }
 
-  static async createLog(logData: Omit<AuditLog, '_id' | 'timestamp'>): Promise<ObjectId> {
+  static async createLog(logData: Omit<AuditLog, '_id' | 'timestamp'>, request?: NextRequest | any): Promise<ObjectId> {
     const db = await this.getDb()
 
     const auditEntry: AuditLog = {
       ...logData,
       _id: new ObjectId(),
       timestamp: new Date(),
+      ipAddress: getClientIp(request),
+      userAgent: request?.headers?.get?.("user-agent") || request?.headers?.["user-agent"] || "unknown",
     }
 
     const result = await db.collection("audit_logs").insertOne(auditEntry)
@@ -133,7 +156,8 @@ export class AuditOperations {
           details: 1,
           timestamp: 1,
           status: 1,
-          error: 1,
+          success: { $eq: ["$status", "success"] },
+          errorMessage: "$error",
           "user._id": 1,
           "user.name": 1,
           "user.email": 1,
@@ -336,8 +360,6 @@ export class AuditOperations {
     // Enhanced details with request information
     const enhancedDetails = {
       ...details,
-      ipAddress: request?.ip || request?.headers?.["x-forwarded-for"] || "unknown",
-      userAgent: request?.headers?.["user-agent"] || "unknown",
       timestamp: new Date(),
     }
 
@@ -350,6 +372,8 @@ export class AuditOperations {
       details: enhancedDetails,
       timestamp: new Date(),
       status: success ? 'success' : 'failed',
+      ipAddress: getClientIp(request),
+      userAgent: request?.headers?.get?.("user-agent") || request?.headers?.["user-agent"] || "unknown",
       ...(errorMessage && { error: errorMessage })
     }
 

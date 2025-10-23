@@ -77,7 +77,7 @@ export class AuthService {
     }
   }
 
-  static async login(email: string, password: string): Promise<{ user: AuthUser; token: string } | null> {
+  static async login(email: string, password: string, request?: any): Promise<{ user: AuthUser; token: string } | null> {
     await initializeAuth();
     const user = await UserOperations.getUserByEmail(email)
     if (!user) {
@@ -106,9 +106,9 @@ export class AuthService {
       action: "login",
       resourceType: "user",
       resourceId: user._id!,
-      details: { ipAddress: "unknown" },
+      details: {},
       status: "success"
-    })
+    }, request)
 
     return { user: authUser, token }
   }
@@ -119,7 +119,7 @@ export class AuthService {
     name: string
     role?: "admin" | "manager" | "user"
     department?: string
-  }): Promise<{ user: AuthUser; token: string } | null> {
+  }, request?: any): Promise<{ user: AuthUser; token: string } | null> {
     await initializeAuth();
     // Check if user already exists
     const existingUser = await UserOperations.getUserByEmail(userData.email)
@@ -159,7 +159,7 @@ export class AuthService {
       resourceId: userId,
       details: { action: "user_registered" },
       status: "success"
-    })
+    }, request)
 
     return { user: authUser, token }
   }

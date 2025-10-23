@@ -28,6 +28,13 @@ import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { formatDistanceToNow } from "date-fns"
 
+
+export interface FileMetadata {
+  version: number
+  checksum?: string       // optional if sometimes missing
+  accessCount?: number    // optional if sometimes missing
+}
+
 interface FileVersion {
   _id: string
   version: number

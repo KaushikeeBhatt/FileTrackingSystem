@@ -10,7 +10,7 @@ async function registerHandler(request: NextRequest) {
       return NextResponse.json({ error: "Email, password, and name are required" }, { status: 400 })
     }
 
-    const result = await AuthService.register(userData)
+    const result = await AuthService.register(userData, request)
 
     if (!result) {
       return NextResponse.json({ error: "Registration failed. Email may already be in use." }, { status: 400 })

@@ -60,7 +60,7 @@ async function downloadVersionHandler(
     })
 
     // Return file with version in filename
-    return new NextResponse(buffer, {
+    return new NextResponse(buffer as any, {
       headers: {
         "Content-Type": file.fileType || "application/octet-stream",
         "Content-Disposition": `attachment; filename="${file.originalName}_v${version.version}"`,
